@@ -1,5 +1,7 @@
 <?php
 
+
+use App\Http\Controllers\BookController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
@@ -15,6 +17,19 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+});
+
+// Add this entire block at the bottom of routes/web.php
+
+Route::middleware(['auth'])->group(function () {
+    // This will be our main page to list all books
+    Route::get('/books', [BookController::class, 'index'])->name('books.index');
+
+    // This will be the page with the "Add New Book" form
+    Route::get('/books/create', [BookController::class, 'create'])->name('books.create');
+
+    // This route will handle the form submission
+    Route::post('/books', [BookController::class, 'store'])->name('books.store');
 });
 
 require __DIR__.'/auth.php';
