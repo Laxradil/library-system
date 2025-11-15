@@ -40,6 +40,18 @@ class AuthServiceProvider extends ServiceProvider
         // This Gate checks if a user is at least a Viewer (everyone)
         Gate::define('is-viewer', function(User $user) {
             return in_array($user->role, ['admin', 'contributor', 'viewer']);
+        }); 
+        
+        // This Gate checks if a user can update a book
+        Gate::define('update-book', function (User $user, Book $book) {
+        // Allow if they are an Admin OR they are the user who created the book
+        return $user->role === 'admin' || $user->id === $book->user_id;
+        });
+
+        // This Gate checks if a user can delete a book
+        Gate::define('delete-book', function (User $user, Book $book) {
+        // Allow if they are an Admin OR they are the user who created the book
+        return $user->role === 'admin' || $user->id === $book->user_id;
         });
     }
 }

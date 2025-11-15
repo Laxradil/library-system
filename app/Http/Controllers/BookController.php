@@ -5,12 +5,9 @@ namespace App\Http\Controllers;
 // Add this line at the top, right after "use Illuminate\Http\Request;"
 use App\Models\Book;
 use Illuminate\Http\Request;
-use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 
 class BookController extends Controller
-{ 
-    use AuthorizesRequests;
-
+{
     public function index()
     {
         // Get all books from the database, newest first
@@ -38,14 +35,42 @@ class BookController extends Controller
             'title' => 'required|string|max:255',
             'author' => 'required|string|max:255',
             'description' => 'nullable|string',
-        ]); 
-
-        $validated['user_id'] = auth()->id();
+        ]);
+        
+        $validated['user_id'] = auth()->id(); 
 
         // 2. Create the new book in the database
         Book::create($validated);
 
         // 3. Redirect the user back to the main books list
         return redirect(route('books.index'));
+    }
+
+    // Show edit form
+    public function edit(Book $book)
+    {
+        $this->authorize('is-contributor');
+        return view('books.edit', compact('book'));
+    }
+
+    // Update book
+    public function update(Request $request, Book $book)
+    {
+        $this->authorize('is-contributor');
+        $validated = $request->validate([
+            'title' => 'required|string|max:255',
+            'author' => 'required|string|max:255',
+            'description' => 'nullable|string',
+        ]);
+        $book->update($validated);
+        return redirect()->route('books.index')->with('success', 'Book updated successfully.');
+    }
+
+    // Delete book
+    public function destroy(Book $book)
+    {
+        $this->authorize('is-contributor');
+        $book->delete();
+        return redirect()->route('books.index')->with('success', 'Book deleted successfully.');
     }
 }

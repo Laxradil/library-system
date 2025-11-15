@@ -30,6 +30,15 @@ Route::middleware(['auth'])->group(function () {
 
     // This route will handle the form submission
     Route::post('/books', [BookController::class, 'store'])->name('books.store');
+
+    // Edit book form
+    Route::get('/books/{book}/edit', [BookController::class, 'edit'])->name('books.edit');
+
+    // Update book
+    Route::put('/books/{book}', [BookController::class, 'update'])->name('books.update');
+
+    // Delete book
+    Route::delete('/books/{book}', [BookController::class, 'destroy'])->name('books.destroy');
 });
 
 // ADMIN ROUTES
