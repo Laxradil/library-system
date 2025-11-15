@@ -21,13 +21,15 @@ class BookController extends Controller
 
     // This function just shows the page with the form
     public function create()
-    {
+    { 
+        $this->authorize('is-contributor'); // Only Admins and Contributors can see the form
         return view('books.create');
     }
 
     // This function validates and saves the new book
     public function store(Request $request)
-    {
+    { 
+        $this->authorize('is-contributor'); // Only Admins and Contributors can save a book
         // 1. Validate the incoming data
         $validated = $request->validate([
             'title' => 'required|string|max:255',

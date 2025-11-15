@@ -1,6 +1,6 @@
 <?php
 
-
+use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\BookController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
@@ -30,6 +30,22 @@ Route::middleware(['auth'])->group(function () {
 
     // This route will handle the form submission
     Route::post('/books', [BookController::class, 'store'])->name('books.store');
+});
+
+// ADMIN ROUTES
+Route::middleware(['auth', 'can:is-admin'])->prefix('admin')->name('admin.')->group(function () {
+
+    // This will be the main user list: /admin/users
+    Route::get('/users', [UserController::class, 'index'])->name('users.index');
+
+    // This will be the "Edit User" page: /admin/users/1/edit
+    Route::get('/users/{user}/edit', [UserController::class, 'edit'])->name('users.edit');
+
+    // This will handle the "Update User" form submission
+    Route::put('/users/{user}', [UserController::class, 'update'])->name('users.update');
+
+    // This will handle deleting a user
+    Route::delete('/users/{user}', [UserController::class, 'destroy'])->name('users.destroy');
 });
 
 require __DIR__.'/auth.php';

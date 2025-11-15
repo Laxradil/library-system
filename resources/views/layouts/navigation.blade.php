@@ -17,7 +17,12 @@
                     </x-nav-link> 
                     <x-nav-link :href="route('books.index')" :active="request()->routeIs('books.index')">
                         {{ __('Books') }}
-                    </x-nav-link>
+                    </x-nav-link> 
+                    @can('is-admin')
+                <x-nav-link :href="route('admin.users.index')" :active="request()->routeIs('admin.users.index')">
+                    {{ __('Manage Users') }}
+                </x-nav-link>
+                    @endcan
                 </div>
             </div>
 
