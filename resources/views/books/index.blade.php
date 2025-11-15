@@ -25,7 +25,7 @@
                         @forelse ($books as $book)
                             <div class="p-4 border rounded-lg dark:border-gray-700">
                                 <h4 class="text-xl font-bold text-gray-900 dark:text-gray-100">{{ $book->title }}</h4>
-                                <p class="text-sm text-gray-600 dark:text-gray-300">by {{ $book->author }}</p>
+                                <p class="text-sm text-gray-500 dark:text-gray-400">Added by: {{ $book->user->name ?? 'Unknown' }}</p>
                                 <p class="mt-2 dark:text-gray-200">{{ $book->description }}</p>
                             </div>
                         @empty

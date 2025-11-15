@@ -5,13 +5,16 @@ namespace App\Http\Controllers;
 // Add this line at the top, right after "use Illuminate\Http\Request;"
 use App\Models\Book;
 use Illuminate\Http\Request;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 
 class BookController extends Controller
-{
+{ 
+    use AuthorizesRequests;
+
     public function index()
     {
         // Get all books from the database, newest first
-        $books = Book::latest()->get();
+        $books = Book::with('user')->latest()->get();
 
         // Send the user to a view file, and pass the $books variable to it
         return view('books.index', [
@@ -35,7 +38,9 @@ class BookController extends Controller
             'title' => 'required|string|max:255',
             'author' => 'required|string|max:255',
             'description' => 'nullable|string',
-        ]);
+        ]); 
+
+        $validated['user_id'] = auth()->id();
 
         // 2. Create the new book in the database
         Book::create($validated);
