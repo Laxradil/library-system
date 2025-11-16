@@ -8,10 +8,51 @@ use Illuminate\Http\Request;
 
 class BookController extends Controller
 {
+    /**
+     * Homepage - shows all books with only wishlist button visible
+     */
+    public function home()
+    {
+        // Searching by title or author (optional)
+        $query = request('q');
+
+        $booksQuery = Book::with('user')->latest();
+
+        if ($query) {
+            $booksQuery->where(function ($q) use ($query) {
+                $q->where('title', 'like', "%{$query}%")
+                  ->orWhere('author', 'like', "%{$query}%")
+                  ->orWhere('genre', 'like', "%{$query}%");
+            });
+        }
+
+        $books = $booksQuery->get();
+
+        // Send the user to a view file, and pass the $books variable to it
+        return view('books.home', [
+            'books' => $books,
+        ]);
+    }
+
+    /**
+     * Browse Books page - full CRUD for contributors
+     */
     public function index()
     {
-        // Get all books from the database, newest first
-        $books = Book::with('user')->latest()->get();
+        // Searching by title or author (optional)
+        $query = request('q');
+
+        $booksQuery = Book::with('user')->latest();
+
+        if ($query) {
+            $booksQuery->where(function ($q) use ($query) {
+                $q->where('title', 'like', "%{$query}%")
+                  ->orWhere('author', 'like', "%{$query}%")
+                  ->orWhere('genre', 'like', "%{$query}%");
+            });
+        }
+
+        $books = $booksQuery->get();
 
         // Send the user to a view file, and pass the $books variable to it
         return view('books.index', [
@@ -35,9 +76,19 @@ class BookController extends Controller
             'title' => 'required|string|max:255',
             'author' => 'required|string|max:255',
             'description' => 'nullable|string',
+            'cover' => 'nullable|image|max:2048',
+            'published_at' => 'nullable|date',
+            'genre' => 'nullable|string|max:255',
+            'rating' => 'nullable|integer|min:0|max:5',
         ]);
         
         $validated['user_id'] = auth()->id(); 
+
+        // Handle cover upload
+        if ($request->hasFile('cover')) {
+            $path = $request->file('cover')->store('covers', 'public');
+            $validated['cover'] = $path;
+        }
 
         // 2. Create the new book in the database
         Book::create($validated);
@@ -61,7 +112,16 @@ class BookController extends Controller
             'title' => 'required|string|max:255',
             'author' => 'required|string|max:255',
             'description' => 'nullable|string',
+            'cover' => 'nullable|image|max:2048',
+            'published_at' => 'nullable|date',
+            'genre' => 'nullable|string|max:255',
+            'rating' => 'nullable|integer|min:0|max:5',
         ]);
+
+        if ($request->hasFile('cover')) {
+            $path = $request->file('cover')->store('covers', 'public');
+            $validated['cover'] = $path;
+        }
         $book->update($validated);
         return redirect()->route('books.index')->with('success', 'Book updated successfully.');
     }

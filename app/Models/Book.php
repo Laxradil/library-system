@@ -17,9 +17,17 @@ class Book extends Model
     protected $fillable = [
         'title',
         'author',
-        'description', 
-        'user_id', 
+        'description',
+        'user_id',
+        'cover',
+        'published_at',
+        'genre',
+        'rating',
     ]; 
+
+    protected $casts = [
+        'published_at' => 'date',
+    ];
     
     public function user()
     {

@@ -10,12 +10,17 @@
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 text-gray-900">
                     
-                    <form method="POST" action="{{ route('books.store') }}">
+                    <form method="POST" action="{{ route('books.store') }}" enctype="multipart/form-data">
                         @csrf 
 
                         <div>
                             <label for="title" class="block font-medium text-sm text-gray-700">Title</label>
                             <input id="title" name="title" type="text" class="block mt-1 w-full rounded-md shadow-sm border-gray-300" required autofocus>
+                        </div>
+
+                        <div class="mt-4">
+                            <label for="cover" class="block font-medium text-sm text-gray-700">Book Cover</label>
+                            <input id="cover" name="cover" type="file" accept="image/*" class="block mt-1 w-full">
                         </div>
 
                         <div class="mt-4">
@@ -26,6 +31,29 @@
                         <div class="mt-4">
                             <label for="description" class="block font-medium text-sm text-gray-700">Description</label>
                             <textarea id="description" name="description" rows="4" class="block mt-1 w-full rounded-md shadow-sm border-gray-300"></textarea>
+                        </div>
+
+                        <div class="mt-4 grid grid-cols-2 gap-4">
+                            <div>
+                                <label for="published_at" class="block font-medium text-sm text-gray-700">Published date</label>
+                                <input id="published_at" name="published_at" type="date" class="block mt-1 w-full rounded-md shadow-sm border-gray-300">
+                            </div>
+                            <div>
+                                <label for="genre" class="block font-medium text-sm text-gray-700">Genre</label>
+                                <input id="genre" name="genre" type="text" class="block mt-1 w-full rounded-md shadow-sm border-gray-300">
+                            </div>
+                        </div>
+
+                        <div class="mt-4">
+                            <label for="rating" class="block font-medium text-sm text-gray-700">Rating</label>
+                            <select name="rating" id="rating" class="block mt-1 w-32 rounded-md shadow-sm border-gray-300">
+                                <option value="0">0</option>
+                                <option value="1">1</option>
+                                <option value="2">2</option>
+                                <option value="3">3</option>
+                                <option value="4">4</option>
+                                <option value="5">5</option>
+                            </select>
                         </div>
 
                         <div class="flex items-center justify-end mt-4">

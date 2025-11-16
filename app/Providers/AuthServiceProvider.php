@@ -5,7 +5,9 @@ namespace App\Providers;
 // We need these models and facades
 use App\Models\User;
 use App\Models\Book;
+use App\Models\WishlistItem;
 use App\Policies\BookPolicy;
+use App\Policies\WishlistItemPolicy;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 
@@ -18,6 +20,7 @@ class AuthServiceProvider extends ServiceProvider
      */
     protected $policies = [
         Book::class => BookPolicy::class,
+        WishlistItem::class => WishlistItemPolicy::class,
     ];
 
     /**

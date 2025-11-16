@@ -3,14 +3,15 @@
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\BookController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\WishlistController;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', function () {
-    return view('welcome');
-});
+// Homepage - shows books with wishlist button only
+Route::get('/', [BookController::class, 'home'])->name('home');
 
 Route::get('/dashboard', function () {
-    return view('dashboard');
+    // Redirect to the homepage (books listing) — we no longer use the default dashboard view as the primary page.
+    return redirect()->route('home');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
@@ -19,26 +20,22 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-// Add this entire block at the bottom of routes/web.php
+// Public book listing
+Route::get('/books', [BookController::class, 'index'])->name('books.index');
 
 Route::middleware(['auth'])->group(function () {
-    // This will be our main page to list all books
-    Route::get('/books', [BookController::class, 'index'])->name('books.index');
 
-    // This will be the page with the "Add New Book" form
+    // Books routes
     Route::get('/books/create', [BookController::class, 'create'])->name('books.create');
-
-    // This route will handle the form submission
     Route::post('/books', [BookController::class, 'store'])->name('books.store');
-
-    // Edit book form
     Route::get('/books/{book}/edit', [BookController::class, 'edit'])->name('books.edit');
-
-    // Update book
     Route::put('/books/{book}', [BookController::class, 'update'])->name('books.update');
-
-    // Delete book
     Route::delete('/books/{book}', [BookController::class, 'destroy'])->name('books.destroy');
+
+    // Wishlist routes
+    Route::get('/wishlist', [WishlistController::class, 'index'])->name('wishlist.index');
+    Route::post('/wishlist', [WishlistController::class, 'store'])->name('wishlist.store');
+    Route::delete('/wishlist/{item}', [WishlistController::class, 'destroy'])->name('wishlist.destroy');
 });
 
 // ADMIN ROUTES
@@ -55,6 +52,6 @@ Route::middleware(['auth', 'can:is-admin'])->prefix('admin')->name('admin.')->gr
 
     // This will handle deleting a user
     Route::delete('/users/{user}', [UserController::class, 'destroy'])->name('users.destroy');
-});
+});;
 
 require __DIR__.'/auth.php';
