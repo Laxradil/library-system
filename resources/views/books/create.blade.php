@@ -39,8 +39,9 @@
                                 <input id="published_at" name="published_at" type="date" class="block mt-1 w-full rounded-md shadow-sm border-gray-300">
                             </div>
                             <div>
-                                <label for="genre" class="block font-medium text-sm text-gray-700">Genre</label>
-                                <input id="genre" name="genre" type="text" class="block mt-1 w-full rounded-md shadow-sm border-gray-300">
+                                <label for="genre" class="block font-medium text-sm text-gray-700">Tags (comma-separated)</label>
+                                <input id="genre" name="genre" type="text" placeholder="e.g., Fiction, Science, Drama" class="block mt-1 w-full rounded-md shadow-sm border-gray-300" value="{{ old('genre') }}">
+                                <p class="text-xs text-gray-500 mt-1">Separate multiple tags with commas</p>
                             </div>
                         </div>
 

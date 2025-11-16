@@ -30,8 +30,9 @@
                         </div>
 
                         <div class="mb-4">
-                            <label class="block text-gray-700 dark:text-gray-200 text-sm font-bold mb-2" for="genre">Genre</label>
-                            <input type="text" name="genre" id="genre" value="{{ old('genre', $book->genre) }}" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 dark:text-gray-900 leading-tight focus:outline-none focus:shadow-outline">
+                            <label class="block text-gray-700 dark:text-gray-200 text-sm font-bold mb-2" for="genre">Tags (comma-separated)</label>
+                            <input type="text" name="genre" id="genre" placeholder="e.g., Fiction, Science, Drama" value="{{ old('genre', $book->genre) }}" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 dark:text-gray-900 leading-tight focus:outline-none focus:shadow-outline">
+                            <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Separate multiple tags with commas</p>
                         </div>
 
                         <div class="mb-4">

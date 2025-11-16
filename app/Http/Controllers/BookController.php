@@ -15,6 +15,10 @@ class BookController extends Controller
     {
         // Searching by title or author (optional)
         $query = request('q');
+        $selectedTags = request('tags', []);
+        if (is_string($selectedTags)) {
+            $selectedTags = [$selectedTags];
+        }
 
         $booksQuery = Book::with('user')->latest();
 
@@ -26,11 +30,22 @@ class BookController extends Controller
             });
         }
 
+        if (!empty($selectedTags)) {
+            $booksQuery->where(function ($q) use ($selectedTags) {
+                foreach ($selectedTags as $tag) {
+                    $q->orWhere('genre', 'like', "%{$tag}%");
+                }
+            });
+        }
+
         $books = $booksQuery->get();
+        $allTags = Book::getAllTags();
 
         // Send the user to a view file, and pass the $books variable to it
         return view('books.home', [
             'books' => $books,
+            'allTags' => $allTags,
+            'selectedTags' => $selectedTags,
         ]);
     }
 
