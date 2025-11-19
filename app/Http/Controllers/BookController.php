@@ -20,6 +20,7 @@ class BookController extends Controller
             $selectedTags = [$selectedTags];
         }
 
+        // Start base query
         $booksQuery = Book::with('user');
 
         // Filter by approval for non-admins
@@ -27,11 +28,24 @@ class BookController extends Controller
             $booksQuery->where('approved', true);
         }
 
-        // Sorting support
-        if (request('sort') === 'most_viewed') {
-            $booksQuery->orderBy('views', 'desc');
-        } else {
-            $booksQuery->latest();
+        // Sorting support: latest | most_viewed | least_viewed | highest_rated | lowest_rated
+        $sort = request('sort');
+        switch ($sort) {
+            case 'most_viewed':
+                $booksQuery->orderBy('views', 'desc');
+                break;
+            case 'least_viewed':
+                $booksQuery->orderBy('views', 'asc');
+                break;
+            case 'highest_rated':
+                $booksQuery->orderBy('rating', 'desc');
+                break;
+            case 'lowest_rated':
+                $booksQuery->orderBy('rating', 'asc');
+                break;
+            default:
+                $booksQuery->latest();
+                break;
         }
 
         if ($query) {
@@ -51,13 +65,62 @@ class BookController extends Controller
         }
 
         $books = $booksQuery->get();
+
+        // Tags & genres (for panels)
         $allTags = Book::getAllTags();
+        // Choose up to 8 genres to display as panels (if fewer available, show all)
+        $genres = array_slice($allTags, 0, 8);
+        $genrePanels = [];
+        foreach ($genres as $genre) {
+            $gq = Book::with('user')->where('genre', 'like', "%{$genre}%");
+            if (!auth()->check() || auth()->user()->role !== 'admin') {
+                $gq->where('approved', true);
+            }
+
+            // apply same sort to genre panels
+            switch ($sort) {
+                case 'most_viewed':
+                    $gq->orderBy('views', 'desc');
+                    break;
+                case 'least_viewed':
+                    $gq->orderBy('views', 'asc');
+                    break;
+                case 'highest_rated':
+                    $gq->orderBy('rating', 'desc');
+                    break;
+                case 'lowest_rated':
+                    $gq->orderBy('rating', 'asc');
+                    break;
+                default:
+                    $gq->latest();
+                    break;
+            }
+
+            $genrePanels[$genre] = $gq->limit(6)->get();
+        }
+
+        // Prevent duplication: remove any books already shown in genre panels from the main books list
+        $displayedIds = [];
+        foreach ($genrePanels as $gbooks) {
+            foreach ($gbooks as $g) {
+                $displayedIds[] = $g->id;
+            }
+        }
+        $displayedIds = array_unique($displayedIds);
+
+        if (!empty($displayedIds)) {
+            $books = $books->filter(function ($b) use ($displayedIds) {
+                return !in_array($b->id, $displayedIds);
+            })->values();
+        }
 
         // Send the user to a view file, and pass the $books variable to it
         return view('books.home', [
             'books' => $books,
             'allTags' => $allTags,
             'selectedTags' => $selectedTags,
+            'genrePanels' => $genrePanels,
+            'genres' => $genres,
         ]);
     }
 

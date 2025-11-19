@@ -90,11 +90,37 @@
                                     @endforeach
                                     <label class="text-sm text-gray-500 dark:text-gray-300">Sort:</label>
                                     <select name="sort" onchange="this.form.submit()" class="ms-2 px-2 py-1 rounded bg-white dark:bg-gray-700 border text-sm">
-                                        <option value="latest" {{ request('sort') !== 'most_viewed' ? 'selected' : '' }}>Latest</option>
+                                        <option value="latest" {{ request('sort') === null || request('sort') === 'latest' ? 'selected' : '' }}>Latest</option>
                                         <option value="most_viewed" {{ request('sort') === 'most_viewed' ? 'selected' : '' }}>Most Viewed</option>
+                                        <option value="least_viewed" {{ request('sort') === 'least_viewed' ? 'selected' : '' }}>Least Viewed</option>
+                                        <option value="highest_rated" {{ request('sort') === 'highest_rated' ? 'selected' : '' }}>Highest Rated</option>
+                                        <option value="lowest_rated" {{ request('sort') === 'lowest_rated' ? 'selected' : '' }}>Lowest Rated</option>
                                     </select>
                                 </form>
                             </div>
+
+                            {{-- Genre panels (up to 8) --}}
+                            @if (!empty($genrePanels))
+                                <div class="mb-8 space-y-6">
+                                    @foreach ($genrePanels as $genreName => $genreBooks)
+                                        <div>
+                                            <div class="flex items-center justify-between mb-3">
+                                                <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100">{{ $genreName }}</h3>
+                                                <a href="{{ route('home', array_merge(request()->all(), ['tags' => [$genreName]])) }}" class="text-sm text-blue-600 dark:text-blue-400 hover:underline">View all</a>
+                                            </div>
+                                            <div class="flex gap-4 overflow-x-auto pb-2">
+                                                @forelse ($genreBooks as $gbook)
+                                                    <div class="w-80 flex-shrink-0">
+                                                        <x-book-card :book="$gbook" mode="browse" />
+                                                    </div>
+                                                @empty
+                                                    <p class="text-sm text-gray-500 dark:text-gray-400">No books in this genre yet.</p>
+                                                @endforelse
+                                            </div>
+                                        </div>
+                                    @endforeach
+                                </div>
+                            @endif
 
                             <div class="space-y-5">
                                 @forelse ($books as $book)
