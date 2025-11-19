@@ -62,6 +62,23 @@
 
         <!-- Actions (mode-aware) -->
         <div class="flex gap-3 mt-4 pt-4 border-t border-gray-200 dark:border-gray-700 w-full">
+            {{-- Admin approval badge / action --}}
+            @can('is-admin')
+                <div class="ms-auto me-0 text-sm">
+                    @if ($book->approved)
+                        <span class="inline-flex items-center px-2 py-1 rounded bg-green-100 text-green-800 text-xs">Approved</span>
+                    @else
+                        <span class="inline-flex items-center px-2 py-1 rounded bg-yellow-100 text-yellow-800 text-xs">Pending</span>
+                    @endif
+                </div>
+                <form action="{{ route('admin.books.approve', $book) }}" method="POST">
+                    @csrf
+                    <input type="hidden" name="approved" value="{{ $book->approved ? 0 : 1 }}">
+                    <button type="submit" class="inline-flex items-center gap-2 px-3 py-2 bg-indigo-600 text-white text-xs font-semibold rounded-lg shadow-md hover:shadow-lg">
+                        {{ $book->approved ? 'Unapprove' : 'Approve' }}
+                    </button>
+                </form>
+            @endcan
             @if ($mode === 'manage')
                 @can('is-contributor')
                     <a href="{{ route('books.edit', $book) }}" class="inline-flex items-center gap-2 px-3 py-2 bg-amber-500 text-white text-xs font-semibold rounded-lg shadow-md hover:shadow-lg">Edit</a>

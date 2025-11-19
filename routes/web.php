@@ -23,6 +23,9 @@ Route::middleware('auth')->group(function () {
 // Public book listing
 Route::get('/books', [BookController::class, 'index'])->name('books.index');
 
+// Book detail (increments views)
+Route::get('/books/{book}', [BookController::class, 'show'])->name('books.show');
+
 Route::middleware(['auth'])->group(function () {
 
     // Books routes
@@ -52,6 +55,9 @@ Route::middleware(['auth', 'can:is-admin'])->prefix('admin')->name('admin.')->gr
 
     // This will handle deleting a user
     Route::delete('/users/{user}', [UserController::class, 'destroy'])->name('users.destroy');
+    
+    // Admin book approval toggle
+    Route::post('/books/{book}/approve', [\App\Http\Controllers\Admin\BookController::class, 'approve'])->name('books.approve');
 });;
 
 require __DIR__.'/auth.php';

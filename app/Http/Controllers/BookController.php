@@ -20,7 +20,19 @@ class BookController extends Controller
             $selectedTags = [$selectedTags];
         }
 
-        $booksQuery = Book::with('user')->latest();
+        $booksQuery = Book::with('user');
+
+        // Filter by approval for non-admins
+        if (!auth()->check() || auth()->user()->role !== 'admin') {
+            $booksQuery->where('approved', true);
+        }
+
+        // Sorting support
+        if (request('sort') === 'most_viewed') {
+            $booksQuery->orderBy('views', 'desc');
+        } else {
+            $booksQuery->latest();
+        }
 
         if ($query) {
             $booksQuery->where(function ($q) use ($query) {
@@ -57,7 +69,18 @@ class BookController extends Controller
         // Searching by title or author (optional)
         $query = request('q');
 
-        $booksQuery = Book::with('user')->latest();
+        $booksQuery = Book::with('user');
+
+        // For public listing, show only approved books to non-admins
+        if (!auth()->check() || auth()->user()->role !== 'admin') {
+            $booksQuery->where('approved', true);
+        }
+
+        if (request('sort') === 'most_viewed') {
+            $booksQuery->orderBy('views', 'desc');
+        } else {
+            $booksQuery->latest();
+        }
 
         if ($query) {
             $booksQuery->where(function ($q) use ($query) {
@@ -147,5 +170,20 @@ class BookController extends Controller
         $this->authorize('is-contributor');
         $book->delete();
         return redirect()->route('books.index')->with('success', 'Book deleted successfully.');
+    }
+
+    /**
+     * Show a single book and increment view counter (supports AJAX).
+     */
+    public function show(Book $book, Request $request)
+    {
+        // Increment views counter
+        $book->increment('views');
+
+        if ($request->wantsJson()) {
+            return response()->json($book);
+        }
+
+        return view('books.show', compact('book'));
     }
 }

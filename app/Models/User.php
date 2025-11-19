@@ -20,7 +20,8 @@ class User extends Authenticatable
     protected $fillable = [
         'name',
         'email',
-        'password', 
+        'password',
+        'role',
     ];
 
     /**
@@ -50,5 +51,21 @@ public function books()
 {
     return $this->hasMany(Book::class);
 }
+
+    // Role helpers
+    public function isAdmin()
+    {
+        return $this->role === 'admin';
+    }
+
+    public function isContributor()
+    {
+        return in_array($this->role, ['admin', 'contributor']);
+    }
+
+    public function isViewer()
+    {
+        return in_array($this->role, ['admin', 'contributor', 'viewer']);
+    }
     
 }

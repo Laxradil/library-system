@@ -24,9 +24,24 @@
                                 <tr>
                                     <td class="px-6 py-4 whitespace-nowrap">{{ $user->name }}</td>
                                     <td class="px-6 py-4 whitespace-nowrap">{{ $user->email }}</td>
-                                    <td class="px-6 py-4 whitespace-nowrap">{{ $user->role }}</td>
                                     <td class="px-6 py-4 whitespace-nowrap">
-                                        <a href="{{ route('admin.users.edit', $user) }}" class="text-indigo-600 hover:text-indigo-900">Edit</a>
+                                        <form action="{{ route('admin.users.update', $user) }}" method="POST" class="flex items-center gap-2">
+                                            @csrf
+                                            @method('PUT')
+                                            <select name="role" class="px-2 py-1 rounded border bg-white dark:bg-gray-700 text-sm">
+                                                <option value="admin" {{ $user->role === 'admin' ? 'selected' : '' }}>Admin</option>
+                                                <option value="contributor" {{ $user->role === 'contributor' ? 'selected' : '' }}>Contributor</option>
+                                                <option value="viewer" {{ $user->role === 'viewer' ? 'selected' : '' }}>Viewer</option>
+                                            </select>
+                                            <button type="submit" class="px-3 py-1 bg-blue-600 text-white rounded text-sm">Save</button>
+                                        </form>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-right">
+                                        <form action="{{ route('admin.users.destroy', $user) }}" method="POST" onsubmit="return confirm('Delete this user?');">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="px-3 py-1 bg-red-600 text-white rounded text-sm">Delete</button>
+                                        </form>
                                     </td>
                                 </tr>
                             @endforeach

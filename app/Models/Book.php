@@ -23,6 +23,8 @@ class Book extends Model
         'published_at',
         'genre',
         'rating',
+        'approved',
+        'views',
     ];
 
     /**

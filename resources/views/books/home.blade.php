@@ -71,7 +71,26 @@
                                 </div>
                             @endif
 
-                            <!-- Books Grid/List -->
+                            <!-- Sort + Books Grid/List -->
+                            <div class="mb-4 flex items-center justify-between">
+                                <div>
+                                    <!-- keep active filters here -->
+                                </div>
+                                <form method="GET" action="{{ route('home') }}" class="flex items-center gap-2">
+                                    @if (request('q'))
+                                        <input type="hidden" name="q" value="{{ request('q') }}">
+                                    @endif
+                                    @foreach (request('tags', []) as $t)
+                                        <input type="hidden" name="tags[]" value="{{ $t }}">
+                                    @endforeach
+                                    <label class="text-sm text-gray-500 dark:text-gray-300">Sort:</label>
+                                    <select name="sort" onchange="this.form.submit()" class="ms-2 px-2 py-1 rounded bg-white dark:bg-gray-700 border text-sm">
+                                        <option value="latest" {{ request('sort') !== 'most_viewed' ? 'selected' : '' }}>Latest</option>
+                                        <option value="most_viewed" {{ request('sort') === 'most_viewed' ? 'selected' : '' }}>Most Viewed</option>
+                                    </select>
+                                </form>
+                            </div>
+
                             <div class="space-y-5">
                                 @forelse ($books as $book)
                                     <x-book-card :book="$book" mode="browse" />
