@@ -56,6 +56,11 @@
                 <div class="col-span-3">
                     <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
                         <div class="p-8 text-gray-900 dark:text-gray-100">
+                                @if (session('success'))
+                                    <div class="mb-4 p-3 rounded bg-green-50 dark:bg-green-900/30 border border-green-100 dark:border-green-800 text-green-800 dark:text-green-200 text-sm">
+                                        {{ session('success') }}
+                                    </div>
+                                @endif
                             <!-- Active Filters Display -->
                             @if (!empty($selectedTags))
                                 <div class="mb-6 flex flex-wrap gap-2">

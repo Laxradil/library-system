@@ -28,6 +28,9 @@
                                         <form action="{{ route('admin.users.update', $user) }}" method="POST" class="flex items-center gap-2">
                                             @csrf
                                             @method('PUT')
+                                            <!-- include name/email so controller validation (name,email,role) passes when updating role inline -->
+                                            <input type="hidden" name="name" value="{{ $user->name }}">
+                                            <input type="hidden" name="email" value="{{ $user->email }}">
                                             <select name="role" class="px-2 py-1 rounded border bg-white dark:bg-gray-700 text-sm">
                                                 <option value="admin" {{ $user->role === 'admin' ? 'selected' : '' }}>Admin</option>
                                                 <option value="contributor" {{ $user->role === 'contributor' ? 'selected' : '' }}>Contributor</option>
@@ -37,11 +40,14 @@
                                         </form>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-right">
-                                        <form action="{{ route('admin.users.destroy', $user) }}" method="POST" onsubmit="return confirm('Delete this user?');">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" class="px-3 py-1 bg-red-600 text-white rounded text-sm">Delete</button>
-                                        </form>
+                                        <div class="flex items-center justify-end gap-2">
+                                            <a href="{{ route('admin.users.edit', $user) }}" class="px-3 py-1 bg-amber-500 text-white rounded text-sm">Edit</a>
+                                            <form action="{{ route('admin.users.destroy', $user) }}" method="POST" onsubmit="return confirm('Delete this user?');">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" class="px-3 py-1 bg-red-600 text-white rounded text-sm">Delete</button>
+                                            </form>
+                                        </div>
                                     </td>
                                 </tr>
                             @endforeach

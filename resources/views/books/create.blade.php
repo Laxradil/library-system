@@ -9,6 +9,13 @@
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 text-gray-900">
+                    @auth
+                        @if (!auth()->user()->isAdmin())
+                            <div class="mb-4 p-3 rounded bg-yellow-50 dark:bg-yellow-900/30 border border-yellow-100 dark:border-yellow-800 text-yellow-800 dark:text-yellow-200 text-sm">
+                                Note: Books you add will be visible on the site only after an admin approves them.
+                            </div>
+                        @endif
+                    @endauth
                     
                     <form method="POST" action="{{ route('books.store') }}" enctype="multipart/form-data">
                         @csrf 

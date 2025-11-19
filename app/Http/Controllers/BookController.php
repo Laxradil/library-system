@@ -71,8 +71,9 @@ class BookController extends Controller
 
         $booksQuery = Book::with('user');
 
-        // For public listing, show only approved books to non-admins
-        if (!auth()->check() || auth()->user()->role !== 'admin') {
+        // For Manage Books: hide unapproved only from unauthenticated users and viewers
+        // Contributors and Admins should see pending books in Manage view
+        if (!auth()->check() || (auth()->user() && auth()->user()->role === 'viewer')) {
             $booksQuery->where('approved', true);
         }
 
@@ -122,6 +123,9 @@ class BookController extends Controller
         
         $validated['user_id'] = auth()->id(); 
 
+        // If created by a non-admin (contributor), mark as not approved.
+        $validated['approved'] = auth()->user() && auth()->user()->role === 'admin' ? true : false;
+
         // Handle cover upload
         if ($request->hasFile('cover')) {
             $path = $request->file('cover')->store('covers', 'public');
@@ -132,7 +136,12 @@ class BookController extends Controller
         Book::create($validated);
 
         // 3. Redirect the user back to the main books list
-        return redirect(route('books.index'));
+        // Show a friendly flash message to contributors that the book will be visible after admin approval
+        if (auth()->user() && auth()->user()->role !== 'admin') {
+            return redirect(route('books.index'))->with('success', 'Book submitted — it will be visible once an admin approves it.');
+        }
+
+        return redirect(route('books.index'))->with('success', 'Book created successfully.');
     }
 
     // Show edit form
