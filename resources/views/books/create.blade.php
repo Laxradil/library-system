@@ -11,7 +11,7 @@
                 <div class="p-6 text-gray-900">
                     @auth
                         @if (!auth()->user()->isAdmin())
-                            <div class="mb-4 p-3 rounded bg-yellow-50 dark:bg-yellow-900/30 border border-yellow-100 dark:border-yellow-800 text-yellow-800 dark:text-yellow-200 text-sm">
+                            <div class="mb-4 p-3 rounded bg-black text-white border border-gray-800 text-sm">
                                 Note: Books you add will be visible on the site only after an admin approves them.
                             </div>
                         @endif

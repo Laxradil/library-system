@@ -13,16 +13,6 @@
     <!-- Content -->
     <div class="flex-1 flex flex-col justify-between w-full h-auto">
         <div>
-            {{-- Approval status badge (visible in Manage and for admins on browse) --}}
-            @if (($mode === 'manage') || (auth()->check() && auth()->user()->role === 'admin'))
-                <div class="mb-3">
-                    @if ($book->approved)
-                        <span class="inline-flex items-center px-2 py-1 rounded bg-green-100 text-green-800 text-xs">Approved</span>
-                    @else
-                        <span class="inline-flex items-center px-2 py-1 rounded bg-yellow-100 text-yellow-800 text-xs">Pending</span>
-                    @endif
-                </div>
-            @endif
             <h4 class="text-xl font-bold text-gray-900 dark:text-gray-100 mb-1 line-clamp-2">{{ $book->title }}</h4>
             <p class="text-sm text-gray-600 dark:text-gray-400 mb-3 flex items-center gap-1">
                 <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207"></path></svg>
@@ -91,6 +81,13 @@
             @endcan
             @if ($mode === 'manage')
                 @can('is-contributor')
+                    <div class="ms-auto me-0 text-sm">
+                        @if ($book->approved)
+                            <span class="inline-flex items-center px-2 py-1 rounded bg-green-100 text-green-800 text-xs">Approved</span>
+                        @else
+                            <span class="inline-flex items-center px-2 py-1 rounded bg-gray-900 text-white text-xs">Pending</span>
+                        @endif
+                    </div>
                     <a href="{{ route('books.edit', $book) }}" class="inline-flex items-center gap-2 px-3 py-2 bg-amber-500 text-white text-xs font-semibold rounded-lg shadow-md hover:shadow-lg">Edit</a>
                     <form action="{{ route('books.destroy', $book) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this book?');">
                         @csrf
