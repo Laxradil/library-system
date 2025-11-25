@@ -1,0 +1,261 @@
+<?php
+
+namespace App\Http\Controllers;
+
+// Add this line at the top, right after "use Illuminate\Http\Request;"
+use App\Models\Book;
+use Illuminate\Http\Request;
+
+class BookController extends Controller
+{
+    /**
+     * Homepage - shows all books with only wishlist button visible
+     */
+    public function home()
+    {
+        // Searching by title or author (optional)
+        $query = request('q');
+        $selectedTags = request('tags', []);
+        if (is_string($selectedTags)) {
+            $selectedTags = [$selectedTags];
+        }
+
+        // Start base query
+        $booksQuery = Book::with('user');
+
+        // Filter by approval for non-admins
+        if (!auth()->check() || auth()->user()->role !== 'admin') {
+            $booksQuery->where('approved', true);
+        }
+
+        // Sorting support: latest | most_viewed | least_viewed | highest_rated | lowest_rated
+        $sort = request('sort');
+        switch ($sort) {
+            case 'most_viewed':
+                $booksQuery->orderBy('views', 'desc');
+                break;
+            case 'least_viewed':
+                $booksQuery->orderBy('views', 'asc');
+                break;
+            case 'highest_rated':
+                $booksQuery->orderBy('rating', 'desc');
+                break;
+            case 'lowest_rated':
+                $booksQuery->orderBy('rating', 'asc');
+                break;
+            default:
+                $booksQuery->latest();
+                break;
+        }
+
+        if ($query) {
+            $booksQuery->where(function ($q) use ($query) {
+                $q->where('title', 'like', "%{$query}%")
+                  ->orWhere('author', 'like', "%{$query}%")
+                  ->orWhere('genre', 'like', "%{$query}%");
+            });
+        }
+
+        if (!empty($selectedTags)) {
+            $booksQuery->where(function ($q) use ($selectedTags) {
+                foreach ($selectedTags as $tag) {
+                    $q->orWhere('genre', 'like', "%{$tag}%");
+                }
+            });
+        }
+
+        $books = $booksQuery->get();
+
+        // Tags & genres (for panels)
+        $allTags = Book::getAllTags();
+        // Choose up to 8 genres to display as panels (if fewer available, show all)
+        $genres = array_slice($allTags, 0, 8);
+        $genrePanels = [];
+        foreach ($genres as $genre) {
+            $gq = Book::with('user')->where('genre', 'like', "%{$genre}%");
+            if (!auth()->check() || auth()->user()->role !== 'admin') {
+                $gq->where('approved', true);
+            }
+
+            // apply same sort to genre panels
+            switch ($sort) {
+                case 'most_viewed':
+                    $gq->orderBy('views', 'desc');
+                    break;
+                case 'least_viewed':
+                    $gq->orderBy('views', 'asc');
+                    break;
+                case 'highest_rated':
+                    $gq->orderBy('rating', 'desc');
+                    break;
+                case 'lowest_rated':
+                    $gq->orderBy('rating', 'asc');
+                    break;
+                default:
+                    $gq->latest();
+                    break;
+            }
+
+            $genrePanels[$genre] = $gq->limit(6)->get();
+        }
+
+        // Prevent duplication: remove any books already shown in genre panels from the main books list
+        $displayedIds = [];
+        foreach ($genrePanels as $gbooks) {
+            foreach ($gbooks as $g) {
+                $displayedIds[] = $g->id;
+            }
+        }
+        $displayedIds = array_unique($displayedIds);
+
+        if (!empty($displayedIds)) {
+            $books = $books->filter(function ($b) use ($displayedIds) {
+                return !in_array($b->id, $displayedIds);
+            })->values();
+        }
+
+        // Send the user to a view file, and pass the $books variable to it
+        return view('books.home', [
+            'books' => $books,
+            'allTags' => $allTags,
+            'selectedTags' => $selectedTags,
+            'genrePanels' => $genrePanels,
+            'genres' => $genres,
+        ]);
+    }
+
+    /**
+     * Browse Books page - full CRUD for contributors
+     */
+    public function index()
+    {
+        // Searching by title or author (optional)
+        $query = request('q');
+
+        $booksQuery = Book::with('user');
+
+        // For Manage Books: hide unapproved only from unauthenticated users and viewers
+        // Contributors and Admins should see pending books in Manage view
+        if (!auth()->check() || (auth()->user() && auth()->user()->role === 'viewer')) {
+            $booksQuery->where('approved', true);
+        }
+
+        if (request('sort') === 'most_viewed') {
+            $booksQuery->orderBy('views', 'desc');
+        } else {
+            $booksQuery->latest();
+        }
+
+        if ($query) {
+            $booksQuery->where(function ($q) use ($query) {
+                $q->where('title', 'like', "%{$query}%")
+                  ->orWhere('author', 'like', "%{$query}%")
+                  ->orWhere('genre', 'like', "%{$query}%");
+            });
+        }
+
+        $books = $booksQuery->get();
+
+        // Send the user to a view file, and pass the $books variable to it
+        return view('books.index', [
+            'books' => $books,
+        ]);
+    }
+
+    // This function just shows the page with the form
+    public function create()
+    { 
+        $this->authorize('is-contributor'); // Only Admins and Contributors can see the form
+        return view('books.create');
+    }
+
+    // This function validates and saves the new book
+    public function store(Request $request)
+    { 
+        $this->authorize('is-contributor'); // Only Admins and Contributors can save a book
+        // 1. Validate the incoming data
+        $validated = $request->validate([
+            'title' => 'required|string|max:255',
+            'author' => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'cover' => 'nullable|image|max:2048',
+            'published_at' => 'nullable|date',
+            'genre' => 'nullable|string|max:255',
+            'rating' => 'nullable|integer|min:0|max:5',
+        ]);
+        
+        $validated['user_id'] = auth()->id(); 
+
+        // If created by a non-admin (contributor), mark as not approved.
+        $validated['approved'] = auth()->user() && auth()->user()->role === 'admin' ? true : false;
+
+        // Handle cover upload
+        if ($request->hasFile('cover')) {
+            $path = $request->file('cover')->store('covers', 'public');
+            $validated['cover'] = $path;
+        }
+
+        // 2. Create the new book in the database
+        Book::create($validated);
+
+        // 3. Redirect the user back to the main books list
+        // Show a friendly flash message to contributors that the book will be visible after admin approval
+        if (auth()->user() && auth()->user()->role !== 'admin') {
+            return redirect(route('books.index'))->with('success', 'Book submitted — it will be visible once an admin approves it.');
+        }
+
+        return redirect(route('books.index'))->with('success', 'Book created successfully.');
+    }
+
+    // Show edit form
+    public function edit(Book $book)
+    {
+        $this->authorize('is-contributor');
+        return view('books.edit', compact('book'));
+    }
+
+    // Update book
+    public function update(Request $request, Book $book)
+    {
+        $this->authorize('is-contributor');
+        $validated = $request->validate([
+            'title' => 'required|string|max:255',
+            'author' => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'cover' => 'nullable|image|max:2048',
+            'published_at' => 'nullable|date',
+            'genre' => 'nullable|string|max:255',
+            'rating' => 'nullable|integer|min:0|max:5',
+        ]);
+
+        if ($request->hasFile('cover')) {
+            $path = $request->file('cover')->store('covers', 'public');
+            $validated['cover'] = $path;
+        }
+        $book->update($validated);
+        return redirect()->route('books.index')->with('success', 'Book updated successfully.');
+    }
+
+    // Delete book
+    public function destroy(Book $book)
+    {
+        $this->authorize('is-contributor');
+        $book->delete();
+        return redirect()->route('books.index')->with('success', 'Book deleted successfully.');
+    }
+
+    /**
+     * Show a single book and increment view counter (supports AJAX).
+     */
+    public function show(Book $book, Request $request)
+    {
+        // Increment views counter
+        $book->increment('views');
+
+        if ($request->wantsJson()) {
+            return response()->json($book);
+        }
+
+        return view('books.show', compact('book'));
+    }
+}
