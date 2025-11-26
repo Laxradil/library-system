@@ -46,8 +46,9 @@ class BookController extends Controller
                 $booksQuery->orderBy('rating', 'desc')->orderBy('views', 'desc');
                 break;
             case 'most_popular':
-                // Combine views + wishlist adds (subquery) to estimate popularity
-                $booksQuery->orderByRaw("(COALESCE(views,0) + COALESCE((select count(*) from wishlist_items where wishlist_items.book_id = books.id),0)) DESC");
+                // Combine views + wishlist adds (subquery) with weighting to estimate popularity
+                // Wishlist adds are weighted higher (x10) so a book with many adds ranks higher.
+                $booksQuery->orderByRaw("(COALESCE(views,0) + COALESCE((select count(*) from wishlist_items where wishlist_items.book_id = books.id),0) * 10) DESC");
                 break;
             default:
                 $booksQuery->latest();

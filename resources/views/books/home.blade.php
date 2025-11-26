@@ -160,14 +160,38 @@
                                         <input type="hidden" name="tags[]" value="{{ $t }}">
                                     @endforeach
                                     <label class="text-sm text-gray-500 dark:text-gray-300">Sort:</label>
-                                    <select name="sort" onchange="this.form.submit()" class="ms-2 px-2 py-1 rounded bg-white dark:bg-gray-700 border text-sm">
-                                        <option value="latest" {{ !request('sort') || request('sort') === 'latest' ? 'selected' : '' }}>Latest</option>
-                                        <option value="alpha" {{ request('sort') === 'alpha' ? 'selected' : '' }}>Alphabetical (A - Z)</option>
-                                        <option value="most_viewed" {{ request('sort') === 'most_viewed' ? 'selected' : '' }}>Most Viewed</option>
-                                        <option value="highest_rated" {{ request('sort') === 'highest_rated' ? 'selected' : '' }}>Highest Rated</option>
-                                        <option value="top_rated" {{ request('sort') === 'top_rated' ? 'selected' : '' }}>Top Rated</option>
-                                        <option value="most_popular" {{ request('sort') === 'most_popular' ? 'selected' : '' }}>Most Popular</option>
-                                    </select>
+                                    <div class="flex items-center gap-3">
+                                        <select id="sort-select" name="sort" onchange="this.form.submit()" class="ms-2 px-2 py-1 rounded bg-white dark:bg-gray-700 border text-sm">
+                                            <option value="latest" {{ !request('sort') || request('sort') === 'latest' ? 'selected' : '' }}>Latest</option>
+                                            <option value="alpha" {{ request('sort') === 'alpha' ? 'selected' : '' }}>Alphabetical (A - Z)</option>
+                                            <option value="most_viewed" {{ request('sort') === 'most_viewed' ? 'selected' : '' }}>Most Viewed</option>
+                                            <option value="highest_rated" {{ request('sort') === 'highest_rated' ? 'selected' : '' }}>Highest Rated</option>
+                                            <option value="top_rated" {{ request('sort') === 'top_rated' ? 'selected' : '' }}>Top Rated</option>
+                                            <option value="most_popular" {{ request('sort') === 'most_popular' ? 'selected' : '' }}>Most Popular</option>
+                                        </select>
+                                        <svg id="sort-help-icon" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor" title="Sort options info"><path fill-rule="evenodd" d="M18 10A8 8 0 11-2 10a8 8 0 0120 0zM9 7a1 1 0 112 0 1 1 0 01-2 0zm.25 2.5a.75.75 0 00-.75.75v3.5a.75.75 0 001.5 0V10.25a.75.75 0 00-.75-.75z" clip-rule="evenodd"/></svg>
+                                    </div>
+                                    <div id="sort-help" class="text-xs text-gray-500 dark:text-gray-400 mt-1">Sort by most recent by default.</div>
+                                    <script>
+                                        (function(){
+                                            const help = document.getElementById('sort-help');
+                                            const select = document.getElementById('sort-select');
+                                            const descriptions = {
+                                                latest: 'Sorts by newest books first (default).',
+                                                alpha: 'Alphabetical by title (A → Z).',
+                                                most_viewed: 'Books with the highest view counts first.',
+                                                highest_rated: 'Books sorted by rating (stars) descending.',
+                                                top_rated: 'Books sorted by rating, with views as a tiebreaker.',
+                                                most_popular: 'Popularity score = views + (wishlist adds × 10). Higher scores first.'
+                                            };
+                                            function update(){
+                                                const v = select.value || 'latest';
+                                                help.textContent = descriptions[v] || '';
+                                            }
+                                            select.addEventListener('change', update);
+                                            update();
+                                        })();
+                                    </script>
                                 </form>
                             </div>
 
