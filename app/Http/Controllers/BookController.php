@@ -28,10 +28,29 @@ class BookController extends Controller
         }
 
         // Sorting support
-        if (request('sort') === 'most_viewed') {
-            $booksQuery->orderBy('views', 'desc');
-        } else {
-            $booksQuery->latest();
+        $sort = request('sort');
+        switch ($sort) {
+            case 'alpha':
+                // Alphabetical A - Z
+                $booksQuery->orderBy('title', 'asc');
+                break;
+            case 'most_viewed':
+                $booksQuery->orderBy('views', 'desc');
+                break;
+            case 'highest_rated':
+                // Order by rating only
+                $booksQuery->orderBy('rating', 'desc');
+                break;
+            case 'top_rated':
+                // Order by rating first, then views as tiebreaker
+                $booksQuery->orderBy('rating', 'desc')->orderBy('views', 'desc');
+                break;
+            case 'most_popular':
+                // Combine views + wishlist adds (subquery) to estimate popularity
+                $booksQuery->orderByRaw("(COALESCE(views,0) + COALESCE((select count(*) from wishlist_items where wishlist_items.book_id = books.id),0)) DESC");
+                break;
+            default:
+                $booksQuery->latest();
         }
 
         if ($query) {

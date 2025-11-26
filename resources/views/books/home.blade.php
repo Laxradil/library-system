@@ -161,8 +161,12 @@
                                     @endforeach
                                     <label class="text-sm text-gray-500 dark:text-gray-300">Sort:</label>
                                     <select name="sort" onchange="this.form.submit()" class="ms-2 px-2 py-1 rounded bg-white dark:bg-gray-700 border text-sm">
-                                        <option value="latest" {{ request('sort') !== 'most_viewed' ? 'selected' : '' }}>Latest</option>
+                                        <option value="latest" {{ !request('sort') || request('sort') === 'latest' ? 'selected' : '' }}>Latest</option>
+                                        <option value="alpha" {{ request('sort') === 'alpha' ? 'selected' : '' }}>Alphabetical (A - Z)</option>
                                         <option value="most_viewed" {{ request('sort') === 'most_viewed' ? 'selected' : '' }}>Most Viewed</option>
+                                        <option value="highest_rated" {{ request('sort') === 'highest_rated' ? 'selected' : '' }}>Highest Rated</option>
+                                        <option value="top_rated" {{ request('sort') === 'top_rated' ? 'selected' : '' }}>Top Rated</option>
+                                        <option value="most_popular" {{ request('sort') === 'most_popular' ? 'selected' : '' }}>Most Popular</option>
                                     </select>
                                 </form>
                             </div>
