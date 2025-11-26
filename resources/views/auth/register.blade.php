@@ -5,80 +5,10 @@
         <!-- Name -->
         <div>
             <x-input-label for="name" :value="__('Name')" />
-
-    <script>
-        (function(){
-            const pwd = document.getElementById('password');
-            const bar = document.getElementById('password-strength-bar');
-            const text = document.getElementById('pw-strength-text');
-            const criteria = document.querySelectorAll('#password-criteria [data-criterion]');
-
-            if (!pwd) return;
-
-            function testPassword(value) {
-                const results = {
-                    length: value.length >= 8 && value.length <= 64,
-                    uppercase: /[A-Z]/.test(value),
-                    number: /[0-9]/.test(value),
-                    symbol: /[^A-Za-z0-9]/.test(value),
-                };
-                return results;
-            }
-
-            function updateUI(value){
-                const res = testPassword(value);
-                const passed = Object.values(res).filter(Boolean).length;
-                const pct = (passed / 4) * 100;
-
-                bar.style.width = pct + '%';
-
-                // color mapping
-                if (pct <= 25) {
-                    bar.classList.remove('from-yellow-400','to-green-500');
-                    bar.classList.add('from-red-500');
-                    text.textContent = 'Very weak';
-                } else if (pct <= 50) {
-                    bar.classList.remove('from-red-500','to-green-500');
-                    bar.classList.add('from-yellow-400');
-                    text.textContent = 'Weak';
-                } else if (pct <= 75) {
-                    bar.classList.remove('from-red-500','from-yellow-400');
-                    bar.classList.add('from-yellow-400','to-green-500');
-                    text.textContent = 'Good';
-                } else {
-                    bar.classList.remove('from-red-500','from-yellow-400');
-                    bar.classList.add('from-green-500');
-                    text.textContent = 'Strong';
-                }
-
-                // update checklist icons and color
-                criteria.forEach(li => {
-                    const key = li.getAttribute('data-criterion');
-                    const ok = !!res[key];
-                    const svg = li.querySelector('svg');
-                    if (ok) {
-                        li.classList.remove('text-gray-500');
-                        li.classList.add('text-green-600');
-                        if (svg) svg.classList.remove('text-gray-300');
-                        if (svg) svg.classList.add('text-green-600');
-                    } else {
-                        li.classList.remove('text-green-600');
-                        li.classList.add('text-gray-500');
-                        if (svg) svg.classList.remove('text-green-600');
-                        if (svg) svg.classList.add('text-gray-300');
-                    }
-                });
-            }
-
-            pwd.addEventListener('input', e => updateUI(e.target.value));
-            // initialize if value present
-            updateUI(pwd.value || '');
-        })();
-    </script>
-
-</x-guest-layout>
+            <x-text-input id="name" class="block mt-1 w-full" type="text" name="name" :value="old('name')" required autofocus autocomplete="name" />
+            <x-input-error :messages="$errors->get('name')" class="mt-2" />
         </div>
-
+        
         <!-- Email Address -->
         <div class="mt-4">
             <x-input-label for="email" :value="__('Email')" />
@@ -149,4 +79,75 @@
             </x-primary-button>
         </div>
     </form>
+
+    <script>
+        (function(){
+            const pwd = document.getElementById('password');
+            const bar = document.getElementById('password-strength-bar');
+            const text = document.getElementById('pw-strength-text');
+            const criteria = document.querySelectorAll('#password-criteria [data-criterion]');
+
+            if (!pwd) return;
+
+            function testPassword(value) {
+                const results = {
+                    length: value.length >= 8 && value.length <= 64,
+                    uppercase: /[A-Z]/.test(value),
+                    number: /[0-9]/.test(value),
+                    symbol: /[^A-Za-z0-9]/.test(value),
+                };
+                return results;
+            }
+
+            function updateUI(value){
+                const res = testPassword(value);
+                const passed = Object.values(res).filter(Boolean).length;
+                const pct = (passed / 4) * 100;
+
+                if (bar) bar.style.width = pct + '%';
+
+                // color mapping
+                if (pct <= 25) {
+                    bar.classList.remove('from-yellow-400','to-green-500');
+                    bar.classList.add('from-red-500');
+                    text.textContent = 'Very weak';
+                } else if (pct <= 50) {
+                    bar.classList.remove('from-red-500','to-green-500');
+                    bar.classList.add('from-yellow-400');
+                    text.textContent = 'Weak';
+                } else if (pct <= 75) {
+                    bar.classList.remove('from-red-500','from-yellow-400');
+                    bar.classList.add('from-yellow-400','to-green-500');
+                    text.textContent = 'Good';
+                } else {
+                    bar.classList.remove('from-red-500','from-yellow-400');
+                    bar.classList.add('from-green-500');
+                    text.textContent = 'Strong';
+                }
+
+                // update checklist icons and color
+                criteria.forEach(li => {
+                    const key = li.getAttribute('data-criterion');
+                    const ok = !!res[key];
+                    const svg = li.querySelector('svg');
+                    if (ok) {
+                        li.classList.remove('text-gray-500');
+                        li.classList.add('text-green-600');
+                        if (svg) svg.classList.remove('text-gray-300');
+                        if (svg) svg.classList.add('text-green-600');
+                    } else {
+                        li.classList.remove('text-green-600');
+                        li.classList.add('text-gray-500');
+                        if (svg) svg.classList.remove('text-green-600');
+                        if (svg) svg.classList.add('text-gray-300');
+                    }
+                });
+            }
+
+            pwd.addEventListener('input', e => updateUI(e.target.value));
+            // initialize if value present
+            updateUI(pwd.value || '');
+        })();
+    </script>
+
 </x-guest-layout>
