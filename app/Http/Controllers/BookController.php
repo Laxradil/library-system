@@ -75,6 +75,17 @@ class BookController extends Controller
             ->limit(6)
             ->get();
 
+        // Prepare 1-3 featured approved books for each main genre for the Browse-by-Genre panels
+        $genrePanels = [];
+        foreach ($mainGenres as $g) {
+            $genrePanels[$g] = Book::with('user')
+                ->where('approved', true)
+                ->where('genre', 'like', "%{$g}%")
+                ->orderByRaw("COALESCE(published_at, created_at) DESC")
+                ->limit(3)
+                ->get();
+        }
+
         // Send the user to a view file, and pass the $books variable to it
         return view('books.home', [
             'books' => $books,
@@ -82,6 +93,7 @@ class BookController extends Controller
             'selectedTags' => $selectedTags,
             'mainGenres' => $mainGenres,
             'recentBooks' => $recentBooks,
+            'genrePanels' => $genrePanels,
         ]);
     }
 

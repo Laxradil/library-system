@@ -99,6 +99,39 @@
                                 </div>
                             @endif
 
+                            <!-- Browse by Genre -->
+                            @if (!empty($genrePanels) && count($genrePanels))
+                                <div class="mb-8">
+                                    <h3 class="text-lg font-bold text-gray-900 dark:text-gray-100 mb-3">Browse by Genre</h3>
+                                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                                        @foreach ($genrePanels as $genre => $panelBooks)
+                                            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-4">
+                                                <div class="flex items-center justify-between mb-2">
+                                                    <div class="font-semibold text-sm text-gray-900 dark:text-gray-100">{{ $genre }}</div>
+                                                    <a href="{{ route('home', ['tags' => [$genre]]) }}" class="text-xs text-blue-600 hover:underline">View all</a>
+                                                </div>
+
+                                                <div class="grid grid-cols-3 gap-2">
+                                                    @if ($panelBooks->count())
+                                                        @foreach ($panelBooks as $gbook)
+                                                            <button type="button" onclick="window.dispatchEvent(new CustomEvent('open-book-modal',{detail:{id:{{ $gbook->id }}}}))" class="w-full h-20 overflow-hidden rounded">
+                                                                @if ($gbook->cover)
+                                                                    <img src="{{ asset('storage/' . $gbook->cover) }}" class="w-full h-full object-cover" alt="{{ $gbook->title }}">
+                                                                @else
+                                                                    <div class="w-full h-full bg-gray-100 dark:bg-gray-700 flex items-center justify-center text-xs text-gray-500">No cover</div>
+                                                                @endif
+                                                            </button>
+                                                        @endforeach
+                                                    @else
+                                                        <div class="col-span-3 w-full h-20 bg-gray-100 dark:bg-gray-700 flex items-center justify-center text-xs text-gray-500">No featured books</div>
+                                                    @endif
+                                                </div>
+                                            </div>
+                                        @endforeach
+                                    </div>
+                                </div>
+                            @endif
+
                             <!-- Active Filters Display -->
                             @if (!empty($selectedTags))
                                 <div class="mb-6 flex flex-wrap gap-2">
