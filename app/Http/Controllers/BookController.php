@@ -54,10 +54,12 @@ class BookController extends Controller
         $allTags = Book::getAllTags();
 
         // Recently released (approved only) - used on homepage top section
+        // Include books that are approved and use `published_at` if present,
+        // otherwise fall back to `created_at` so newly-created approved books
+        // appear in the list immediately.
         $recentBooks = Book::with('user')
             ->where('approved', true)
-            ->whereNotNull('published_at')
-            ->orderByDesc('published_at')
+            ->orderByRaw("COALESCE(published_at, created_at) DESC")
             ->limit(6)
             ->get();
 
