@@ -186,13 +186,44 @@ class BookController extends Controller
      */
     public function show(Book $book, Request $request)
     {
-        // Increment views counter
-        $book->increment('views');
+        // For direct page views (regular browser request) we increment here.
+        // For AJAX/json requests (the global modal), we do NOT increment here
+        // to avoid double-counting — the modal should call the dedicated
+        // increment endpoint which performs a single increment and returns
+        // the updated book JSON.
+        if (!$request->wantsJson()) {
+            $book->increment('views');
+            $book->refresh();
+        }
 
         if ($request->wantsJson()) {
-            return response()->json($book);
+            return response()->json($book->load('user'));
         }
 
         return view('books.show', compact('book'));
+    }
+
+    /**
+     * Increment views via AJAX and return the updated book JSON.
+     */
+    public function increment(Book $book, Request $request)
+    {
+        // Prevent rapid duplicate increments from the same session (10s window)
+        $key = 'book_viewed_' . $book->id;
+        $last = $request->session()->get($key);
+        $now = time();
+        $throttleSeconds = 10;
+
+        if ($last && ($now - $last) < $throttleSeconds) {
+            // Return current value without incrementing
+            $book->refresh();
+            return response()->json($book->load('user'));
+        }
+
+        // Mark timestamp and increment
+        $request->session()->put($key, $now);
+        $book->increment('views');
+        $book->refresh();
+        return response()->json($book->load('user'));
     }
 }

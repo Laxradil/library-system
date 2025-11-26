@@ -13,7 +13,13 @@
     <!-- Content -->
     <div class="flex-1 flex flex-col justify-between w-full h-auto">
         <div>
-            <h4 class="text-xl font-bold text-gray-900 dark:text-gray-100 mb-1 line-clamp-2">{{ $book->title }}</h4>
+            <div class="flex items-start justify-between mb-1">
+                <h4 class="text-xl font-bold text-gray-900 dark:text-gray-100 line-clamp-2">{{ $book->title }}</h4>
+                <div class="ml-4 text-sm text-gray-500 dark:text-gray-400 flex items-center gap-2">
+                    <svg class="w-4 h-4 text-gray-400 dark:text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+                    <span id="book-views-{{ $book->id }}" data-book-views="{{ $book->id }}" class="font-medium">{{ number_format($book->views ?? 0) }}</span>
+                </div>
+            </div>
             <p class="text-sm text-gray-600 dark:text-gray-400 mb-3 flex items-center gap-1">
                 <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207"></path></svg>
                 <span class="truncate">{{ $book->author }}</span>
@@ -62,6 +68,7 @@
 
         <!-- Actions (mode-aware) -->
         <div class="flex gap-3 mt-4 pt-4 border-t border-gray-200 dark:border-gray-700 w-full">
+            <button type="button" onclick="window.dispatchEvent(new CustomEvent('open-book-modal',{detail:{id:{{ $book->id }}}}))" class="inline-flex items-center gap-2 px-3 py-2 bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 text-sm rounded-lg shadow-sm hover:shadow-md">View</button>
             {{-- Admin approval badge / action --}}
             @can('is-admin')
                 <div class="ms-auto me-0 text-sm">

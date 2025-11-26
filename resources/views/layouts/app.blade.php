@@ -32,5 +32,6 @@
                 {{ $slot }}
             </main>
         </div>
+        @include('components.book-detail-portal')
     </body>
 </html>

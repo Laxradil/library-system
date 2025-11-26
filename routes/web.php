@@ -26,6 +26,8 @@ Route::get('/books', [BookController::class, 'index'])->name('books.index');
 // Book detail (increments views) - restrict `{book}` to numeric IDs so routes like `/books/create` aren't captured
 Route::get('/books/{book}', [BookController::class, 'show'])->whereNumber('book')->name('books.show');
 
+// Increment view counter via AJAX (used by the global modal to increment once)
+Route::post('/books/{book}/increment', [BookController::class, 'increment'])->whereNumber('book')->name('books.increment');
 Route::middleware(['auth'])->group(function () {
 
     // Books routes
