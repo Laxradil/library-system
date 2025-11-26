@@ -53,11 +53,20 @@ class BookController extends Controller
         $books = $booksQuery->get();
         $allTags = Book::getAllTags();
 
+        // Recently released (approved only) - used on homepage top section
+        $recentBooks = Book::with('user')
+            ->where('approved', true)
+            ->whereNotNull('published_at')
+            ->orderByDesc('published_at')
+            ->limit(6)
+            ->get();
+
         // Send the user to a view file, and pass the $books variable to it
         return view('books.home', [
             'books' => $books,
             'allTags' => $allTags,
             'selectedTags' => $selectedTags,
+            'recentBooks' => $recentBooks,
         ]);
     }
 

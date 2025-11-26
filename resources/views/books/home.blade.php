@@ -61,6 +61,28 @@
                                         {{ session('success') }}
                                     </div>
                                 @endif
+                            <!-- Recently Released (approved only) -->
+                            @if (!empty($recentBooks) && $recentBooks->count())
+                                <div class="mb-6">
+                                    <h3 class="text-lg font-bold text-gray-900 dark:text-gray-100 mb-3">Recently Released</h3>
+                                    <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-4">
+                                        @foreach ($recentBooks as $book)
+                                            <button type="button" onclick="window.dispatchEvent(new CustomEvent('open-book-modal',{detail:{id:{{ $book->id }}}}))" class="text-left bg-white dark:bg-gray-800 rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-200">
+                                                @if ($book->cover)
+                                                    <img src="{{ asset('storage/' . $book->cover) }}" alt="{{ $book->title }}" class="w-full h-36 object-cover">
+                                                @else
+                                                    <div class="w-full h-36 flex items-center justify-center bg-gradient-to-br from-gray-200 to-gray-300 dark:from-gray-700 dark:to-gray-800 text-gray-500 text-sm">No cover</div>
+                                                @endif
+                                                <div class="p-2">
+                                                    <div class="text-sm font-semibold text-gray-900 dark:text-gray-100 line-clamp-2">{{ $book->title }}</div>
+                                                    <div class="text-xs text-gray-500 dark:text-gray-400">{{ $book->user->name ?? 'Unknown' }}</div>
+                                                </div>
+                                            </button>
+                                        @endforeach
+                                    </div>
+                                </div>
+                            @endif
+
                             <!-- Active Filters Display -->
                             @if (!empty($selectedTags))
                                 <div class="mb-6 flex flex-wrap gap-2">
