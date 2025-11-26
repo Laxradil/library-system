@@ -14,7 +14,7 @@
                         <div class="p-6">
                             <h3 class="text-lg font-bold text-gray-900 dark:text-gray-100 mb-4 flex items-center gap-2">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2h7a1 1 0 011 1v2h-2v12a2 2 0 01-2 2H5a2 2 0 01-2-2V9H1V7h2V4z"></path></svg>
-                                Filter by Tags
+                                Filter by Genre
                             </h3>
 
                             <form method="GET" action="{{ route('home') }}" class="space-y-3" id="filterForm">
@@ -29,23 +29,39 @@
                                     </a>
                                 @endif
 
-                                <!-- Tags List -->
+                                <!-- Genre List (use mainGenres from controller) -->
                                 <div class="space-y-2 max-h-96 overflow-y-auto">
-                                    @forelse ($allTags as $tag)
-                                        <label class="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer transition-colors duration-200">
-                                            <input 
-                                                type="checkbox" 
-                                                name="tags[]" 
-                                                value="{{ $tag }}"
-                                                onchange="document.getElementById('filterForm').submit()"
-                                                @if (in_array($tag, $selectedTags)) checked @endif
-                                                class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 dark:border-gray-600 dark:bg-gray-700 dark:text-blue-400"
-                                            >
-                                            <span class="text-sm text-gray-700 dark:text-gray-300">{{ $tag }}</span>
-                                        </label>
-                                    @empty
-                                        <p class="text-sm text-gray-500 dark:text-gray-400 text-center py-4">No tags available</p>
-                                    @endforelse
+                                    @if (!empty($mainGenres) && count($mainGenres))
+                                        @foreach ($mainGenres as $tag)
+                                            <label class="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer transition-colors duration-200">
+                                                <input 
+                                                    type="checkbox" 
+                                                    name="tags[]" 
+                                                    value="{{ $tag }}"
+                                                    onchange="document.getElementById('filterForm').submit()"
+                                                    @if (in_array($tag, $selectedTags)) checked @endif
+                                                    class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 dark:border-gray-600 dark:bg-gray-700 dark:text-blue-400"
+                                                >
+                                                <span class="text-sm text-gray-700 dark:text-gray-300">{{ $tag }}</span>
+                                            </label>
+                                        @endforeach
+                                    @else
+                                        @forelse ($allTags as $tag)
+                                            <label class="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer transition-colors duration-200">
+                                                <input 
+                                                    type="checkbox" 
+                                                    name="tags[]" 
+                                                    value="{{ $tag }}"
+                                                    onchange="document.getElementById('filterForm').submit()"
+                                                    @if (in_array($tag, $selectedTags)) checked @endif
+                                                    class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 dark:border-gray-600 dark:bg-gray-700 dark:text-blue-400"
+                                                >
+                                                <span class="text-sm text-gray-700 dark:text-gray-300">{{ $tag }}</span>
+                                            </label>
+                                        @empty
+                                            <p class="text-sm text-gray-500 dark:text-gray-400 text-center py-4">No tags available</p>
+                                        @endforelse
+                                    @endif
                                 </div>
                             </form>
                         </div>

@@ -53,6 +53,18 @@ class BookController extends Controller
         $books = $booksQuery->get();
         $allTags = Book::getAllTags();
 
+        // Main genres for the sidebar (8 main genres)
+        $mainGenres = [
+            'Fiction',
+            'Non-Fiction',
+            'Fantasy',
+            'Science Fiction',
+            'Mystery / Thriller',
+            'Romance',
+            'Horror',
+            'Historical',
+        ];
+
         // Recently released (approved only) - used on homepage top section
         // Include books that are approved and use `published_at` if present,
         // otherwise fall back to `created_at` so newly-created approved books
@@ -68,6 +80,7 @@ class BookController extends Controller
             'books' => $books,
             'allTags' => $allTags,
             'selectedTags' => $selectedTags,
+            'mainGenres' => $mainGenres,
             'recentBooks' => $recentBooks,
         ]);
     }
