@@ -29,8 +29,8 @@
                                     </a>
                                 @endif
 
-                                <!-- Genre List (use mainGenres from controller) -->
-                                <div class="space-y-2 max-h-96 overflow-y-auto">
+                                <!-- Genre List (use mainGenres from controller) - expanded height to avoid scrollbar -->
+                                <div class="space-y-2 min-h-[380px]">
                                     @if (!empty($mainGenres) && count($mainGenres))
                                         @foreach ($mainGenres as $tag)
                                             <label class="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer transition-colors duration-200">
