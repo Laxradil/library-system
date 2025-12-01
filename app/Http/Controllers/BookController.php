@@ -63,9 +63,12 @@ class BookController extends Controller
         }
 
         if (!empty($selectedTags)) {
+            // Match genres as whole words (comma-separated list) to avoid partial matches
+            // e.g., "Fiction" should match "Fiction,Fantasy" but NOT "Non-Fiction"
             $booksQuery->where(function ($q) use ($selectedTags) {
                 foreach ($selectedTags as $tag) {
-                    $q->orWhere('genre', 'like', "%{$tag}%");
+                    // Match: exact word, OR preceded by comma, OR followed by comma, OR both
+                    $q->orWhere('genre', 'regexp', "(^|,)\\s*" . preg_quote($tag, '/') . "\\s*(,|$)");
                 }
             });
         }
@@ -86,21 +89,22 @@ class BookController extends Controller
         ];
 
         // Recently released (approved only) - used on homepage top section
-        // Include books that are approved and use `published_at` if present,
-        // otherwise fall back to `created_at` so newly-created approved books
-        // appear in the list immediately.
+        // Prioritize created_at (upload date) to show newly uploaded books first,
+        // falling back to published_at if created_at is very old.
         $recentBooks = Book::with('user')
             ->where('approved', true)
-            ->orderByRaw("COALESCE(published_at, created_at) DESC")
+            ->orderByRaw("created_at DESC")
             ->limit(6)
             ->get();
 
         // Prepare 1-3 featured approved books for each main genre for the Browse-by-Genre panels
         $genrePanels = [];
         foreach ($mainGenres as $g) {
+            // Use word-boundary matching so "Fiction" panel shows only Fiction books,
+            // not "Non-Fiction" books. Match as whole words in a comma-separated list.
             $genrePanels[$g] = Book::with('user')
                 ->where('approved', true)
-                ->where('genre', 'like', "%{$g}%")
+                ->where('genre', 'regexp', "(^|,)\\s*" . preg_quote($g, '/') . "\\s*(,|$)")
                 ->orderByRaw("COALESCE(published_at, created_at) DESC")
                 ->limit(3)
                 ->get();
@@ -173,9 +177,13 @@ class BookController extends Controller
             'description' => 'nullable|string',
             'cover' => 'nullable|image|max:2048',
             'published_at' => 'nullable|date',
-            'genre' => 'nullable|string|max:255',
+            'genres' => 'nullable|array',
             'rating' => 'nullable|integer|min:0|max:5',
         ]);
+        
+        // Convert genres array to comma-separated string
+        $validated['genre'] = !empty($validated['genres']) ? implode(',', $validated['genres']) : null;
+        unset($validated['genres']);
         
         $validated['user_id'] = auth()->id(); 
 
@@ -217,9 +225,13 @@ class BookController extends Controller
             'description' => 'nullable|string',
             'cover' => 'nullable|image|max:2048',
             'published_at' => 'nullable|date',
-            'genre' => 'nullable|string|max:255',
+            'genres' => 'nullable|array',
             'rating' => 'nullable|integer|min:0|max:5',
         ]);
+        
+        // Convert genres array to comma-separated string
+        $validated['genre'] = !empty($validated['genres']) ? implode(',', $validated['genres']) : null;
+        unset($validated['genres']);
 
         if ($request->hasFile('cover')) {
             $path = $request->file('cover')->store('covers', 'public');

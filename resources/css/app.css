@@ -1,3 +1,428 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* ===== GLOBAL ANIMATION KEYFRAMES ===== */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeInDown {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeInLeft {
+    from { opacity: 0; transform: translateX(-20px); }
+    to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes fadeInRight {
+    from { opacity: 0; transform: translateX(20px); }
+    to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes scaleIn {
+    from { opacity: 0; transform: scale(0.95); }
+    to { opacity: 1; transform: scale(1); }
+}
+
+@keyframes slideInUp {
+    from { transform: translateY(100%); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes pulse-glow {
+    0%, 100% { box-shadow: 0 0 5px rgba(59, 130, 246, 0.5); }
+    50% { box-shadow: 0 0 20px rgba(59, 130, 246, 0.8); }
+}
+
+@keyframes shimmer {
+    0% { background-position: -200% 0; }
+    100% { background-position: 200% 0; }
+}
+
+@keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-10px); }
+}
+
+@keyframes wiggle {
+    0%, 100% { transform: rotate(-3deg); }
+    50% { transform: rotate(3deg); }
+}
+
+@keyframes floatHorizontal {
+    0%, 100% {
+        transform: translateX(0) translateY(0) rotate(0deg);
+        opacity: 0.3;
+    }
+    25% {
+        transform: translateX(30px) translateY(-10px) rotate(5deg);
+        opacity: 0.5;
+    }
+    50% {
+        transform: translateX(60px) translateY(5px) rotate(-3deg);
+        opacity: 0.4;
+    }
+    75% {
+        transform: translateX(30px) translateY(-5px) rotate(3deg);
+        opacity: 0.5;
+    }
+}
+
+/* Floating books animation for headers */
+.floating-book {
+    animation: floatHorizontal 12s ease-in-out infinite;
+}
+
+.floating-book:hover {
+    animation-play-state: paused;
+    opacity: 0.8 !important;
+    transform: scale(1.2) !important;
+    cursor: pointer;
+}
+
+@keyframes gradient-shift {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+/* ===== ANIMATION UTILITY CLASSES ===== */
+.animate-fade-in {
+    animation: fadeIn 0.5s ease-out forwards;
+}
+
+.animate-fade-in-up {
+    animation: fadeInUp 0.6s ease-out forwards;
+}
+
+.animate-fade-in-down {
+    animation: fadeInDown 0.6s ease-out forwards;
+}
+
+.animate-fade-in-left {
+    animation: fadeInLeft 0.6s ease-out forwards;
+}
+
+.animate-fade-in-right {
+    animation: fadeInRight 0.6s ease-out forwards;
+}
+
+.animate-scale-in {
+    animation: scaleIn 0.4s ease-out forwards;
+}
+
+.animate-slide-in-up {
+    animation: slideInUp 0.5s ease-out forwards;
+}
+
+.animate-float {
+    animation: float 3s ease-in-out infinite;
+}
+
+.animate-wiggle {
+    animation: wiggle 1s ease-in-out infinite;
+}
+
+.animate-gradient {
+    background-size: 200% 200%;
+    animation: gradient-shift 8s ease infinite;
+}
+
+/* Staggered animation delays */
+.delay-100 { animation-delay: 0.1s; }
+.delay-200 { animation-delay: 0.2s; }
+.delay-300 { animation-delay: 0.3s; }
+.delay-400 { animation-delay: 0.4s; }
+.delay-500 { animation-delay: 0.5s; }
+.delay-600 { animation-delay: 0.6s; }
+.delay-700 { animation-delay: 0.7s; }
+.delay-800 { animation-delay: 0.8s; }
+
+/* Initially hidden for staggered animations */
+.stagger-item {
+    opacity: 0;
+}
+
+/* ===== ENHANCED INPUT STYLES ===== */
+.input-animated {
+    @apply transition-all duration-300 ease-out;
+    @apply border-2 border-gray-200 dark:border-gray-600;
+    @apply focus:border-blue-500 dark:focus:border-blue-400;
+    @apply focus:ring-4 focus:ring-blue-500/20 dark:focus:ring-blue-400/20;
+    @apply hover:border-gray-300 dark:hover:border-gray-500;
+    @apply rounded-xl;
+}
+
+.input-animated:focus {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px -5px rgba(59, 130, 246, 0.15);
+}
+
+/* ===== BUTTON ANIMATIONS ===== */
+.btn-animated {
+    @apply relative overflow-hidden transition-all duration-300 ease-out;
+    @apply transform hover:-translate-y-1 hover:shadow-xl;
+    @apply active:translate-y-0 active:shadow-md;
+}
+
+.btn-animated::before {
+    content: '';
+    @apply absolute inset-0 bg-white/20;
+    transform: translateX(-100%);
+    transition: transform 0.4s ease;
+}
+
+.btn-animated:hover::before {
+    transform: translateX(100%);
+}
+
+.btn-glow {
+    @apply relative;
+    box-shadow: 0 0 20px rgba(59, 130, 246, 0.3);
+    transition: box-shadow 0.3s ease;
+}
+
+.btn-glow:hover {
+    box-shadow: 0 0 30px rgba(59, 130, 246, 0.5);
+}
+
+/* ===== CARD ANIMATIONS ===== */
+.card-animated {
+    @apply transition-all duration-300 ease-out;
+    @apply hover:shadow-2xl hover:-translate-y-2;
+    @apply hover:border-blue-500/50;
+}
+
+.card-3d {
+    @apply transition-transform duration-300;
+    transform-style: preserve-3d;
+    perspective: 1000px;
+}
+
+.card-3d:hover {
+    transform: rotateX(5deg) rotateY(5deg) translateY(-5px);
+}
+
+/* ===== FORM GROUP ANIMATIONS ===== */
+.form-group {
+    @apply relative transition-all duration-300;
+}
+
+.form-group:focus-within label {
+    @apply text-blue-600 dark:text-blue-400;
+    transform: translateY(-2px);
+}
+
+.form-group label {
+    @apply transition-all duration-300;
+}
+
+/* ===== CHECKBOX/RADIO ANIMATIONS ===== */
+.checkbox-animated {
+    @apply transition-all duration-200;
+    @apply hover:scale-110;
+    @apply checked:scale-100;
+}
+
+.checkbox-animated:checked {
+    animation: scaleIn 0.2s ease-out;
+}
+
+/* ===== LINK ANIMATIONS ===== */
+.link-animated {
+    @apply relative;
+    @apply transition-colors duration-300;
+}
+
+.link-animated::after {
+    content: '';
+    @apply absolute bottom-0 left-0 w-0 h-0.5 bg-blue-500;
+    @apply transition-all duration-300;
+}
+
+.link-animated:hover::after {
+    @apply w-full;
+}
+
+/* ===== PAGE TRANSITIONS ===== */
+.page-enter {
+    animation: fadeInUp 0.6s ease-out forwards;
+}
+
+.section-enter {
+    animation: fadeIn 0.8s ease-out forwards;
+}
+
+/* ===== LOADING STATES ===== */
+.skeleton {
+    @apply bg-gradient-to-r from-gray-200 via-gray-100 to-gray-200;
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+}
+
+.skeleton-dark {
+    @apply bg-gradient-to-r from-gray-700 via-gray-600 to-gray-700;
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+}
+
+/* ===== NOTIFICATION/TOAST ANIMATIONS ===== */
+.toast-enter {
+    animation: slideInUp 0.4s ease-out forwards;
+}
+
+.toast-exit {
+    animation: fadeIn 0.3s ease-out reverse forwards;
+}
+
+/* ===== MODAL ANIMATIONS ===== */
+.modal-backdrop {
+    animation: fadeIn 0.3s ease-out forwards;
+}
+
+.modal-content {
+    animation: scaleIn 0.3s ease-out forwards;
+}
+
+/* ===== RIPPLE EFFECT ===== */
+.ripple {
+    @apply relative overflow-hidden;
+}
+
+.ripple::after {
+    content: '';
+    @apply absolute inset-0;
+    background: radial-gradient(circle at center, rgba(255,255,255,0.3) 0%, transparent 70%);
+    transform: scale(0);
+    opacity: 0;
+    transition: transform 0.5s, opacity 0.5s;
+}
+
+.ripple:active::after {
+    transform: scale(2);
+    opacity: 1;
+    transition: 0s;
+}
+
+/* ===== AUTH PAGE SPECIFIC STYLES ===== */
+.auth-container {
+    @apply relative min-h-screen overflow-hidden;
+    background: linear-gradient(135deg, #1e3a5f 0%, #0f172a 50%, #1e1b4b 100%);
+}
+
+.auth-container::before {
+    content: '';
+    @apply absolute inset-0;
+    background: 
+        radial-gradient(ellipse at 20% 20%, rgba(59, 130, 246, 0.15) 0%, transparent 50%),
+        radial-gradient(ellipse at 80% 80%, rgba(139, 92, 246, 0.15) 0%, transparent 50%),
+        radial-gradient(ellipse at 50% 50%, rgba(14, 165, 233, 0.1) 0%, transparent 60%);
+    animation: gradient-shift 15s ease infinite;
+    background-size: 200% 200%;
+}
+
+.auth-card {
+    @apply relative backdrop-blur-xl;
+    @apply bg-white/10 dark:bg-gray-900/50;
+    @apply border border-white/20;
+    @apply shadow-2xl;
+    animation: fadeInUp 0.8s ease-out forwards, float 6s ease-in-out infinite 1s;
+}
+
+.auth-input {
+    @apply w-full px-4 py-3;
+    @apply bg-white/10 dark:bg-gray-800/50;
+    @apply border-2 border-white/20;
+    @apply rounded-xl;
+    @apply text-white placeholder-gray-400;
+    @apply transition-all duration-300;
+    @apply focus:border-blue-400 focus:bg-white/20;
+    @apply focus:ring-4 focus:ring-blue-500/20;
+    @apply focus:outline-none;
+    backdrop-filter: blur(10px);
+}
+
+.auth-input:focus {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 40px -10px rgba(59, 130, 246, 0.3);
+}
+
+.auth-label {
+    @apply block text-sm font-medium text-gray-200 mb-2;
+    @apply transition-all duration-300;
+}
+
+.auth-btn {
+    @apply w-full py-3 px-6;
+    @apply bg-gradient-to-r from-blue-600 to-purple-600;
+    @apply hover:from-blue-500 hover:to-purple-500;
+    @apply text-white font-semibold;
+    @apply rounded-xl;
+    @apply transition-all duration-300;
+    @apply transform hover:-translate-y-1;
+    @apply shadow-lg hover:shadow-2xl hover:shadow-blue-500/25;
+    @apply focus:outline-none focus:ring-4 focus:ring-blue-500/50;
+    @apply relative overflow-hidden;
+}
+
+.auth-btn::before {
+    content: '';
+    @apply absolute inset-0;
+    background: linear-gradient(45deg, transparent 30%, rgba(255,255,255,0.2) 50%, transparent 70%);
+    transform: translateX(-100%);
+    transition: transform 0.6s ease;
+}
+
+.auth-btn:hover::before {
+    transform: translateX(100%);
+}
+
+.auth-link {
+    @apply text-blue-400 hover:text-blue-300;
+    @apply transition-colors duration-300;
+    @apply relative;
+}
+
+.auth-link::after {
+    content: '';
+    @apply absolute bottom-0 left-0 w-0 h-0.5;
+    @apply bg-blue-400;
+    @apply transition-all duration-300;
+}
+
+.auth-link:hover::after {
+    @apply w-full;
+}
+
+/* Floating particles effect */
+.particles {
+    @apply absolute inset-0 overflow-hidden pointer-events-none;
+}
+
+.particle {
+    @apply absolute w-2 h-2 bg-white/20 rounded-full;
+    animation: float 8s ease-in-out infinite;
+}
+
+/* Glass morphism effect */
+.glass {
+    @apply backdrop-blur-xl bg-white/10;
+    @apply border border-white/20;
+    @apply shadow-xl;
+}
+
+.glass-dark {
+    @apply backdrop-blur-xl bg-gray-900/50;
+    @apply border border-gray-700/50;
+    @apply shadow-xl;
+}
+

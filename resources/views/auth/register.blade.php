@@ -1,82 +1,140 @@
 <x-guest-layout>
-    <form method="POST" action="{{ route('register') }}">
+    <!-- Header -->
+    <div class="text-center mb-8 animate-fade-in-up">
+        <h2 class="text-3xl font-bold text-white mb-2">Create Account</h2>
+        <p class="text-gray-400">Join our library community today</p>
+    </div>
+
+    <form method="POST" action="{{ route('register') }}" class="space-y-5">
         @csrf
 
         <!-- Name -->
-        <div>
-            <x-input-label for="name" :value="__('Name')" />
-            <x-text-input id="name" class="block mt-1 w-full" type="text" name="name" :value="old('name')" required autofocus autocomplete="name" />
-            <x-input-error :messages="$errors->get('name')" class="mt-2" />
+        <div class="animate-fade-in-up stagger-item" style="animation-delay: 0.1s; animation-fill-mode: forwards;">
+            <label for="name" class="auth-label">{{ __('Full Name') }}</label>
+            <div class="relative">
+                <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                    <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                    </svg>
+                </div>
+                <input id="name" type="text" name="name" value="{{ old('name') }}" 
+                    class="auth-input pl-12" 
+                    placeholder="John Doe"
+                    required autofocus autocomplete="name" />
+            </div>
+            <x-input-error :messages="$errors->get('name')" class="mt-2 text-red-400" />
         </div>
         
         <!-- Email Address -->
-        <div class="mt-4">
-            <x-input-label for="email" :value="__('Email')" />
-            <x-text-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email')" required autocomplete="username" />
-            <x-input-error :messages="$errors->get('email')" class="mt-2" />
+        <div class="animate-fade-in-up stagger-item" style="animation-delay: 0.15s; animation-fill-mode: forwards;">
+            <label for="email" class="auth-label">{{ __('Email Address') }}</label>
+            <div class="relative">
+                <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                    <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207" />
+                    </svg>
+                </div>
+                <input id="email" type="email" name="email" value="{{ old('email') }}" 
+                    class="auth-input pl-12" 
+                    placeholder=""
+                    required autocomplete="username" />
+            </div>
+            <x-input-error :messages="$errors->get('email')" class="mt-2 text-red-400" />
         </div>
 
         <!-- Password -->
-        <div class="mt-4">
-            <x-input-label for="password" :value="__('Password')" />
-
-            <x-text-input id="password" class="block mt-1 w-full"
-                            type="password"
-                            name="password"
-                            required autocomplete="new-password" />
-
-            <x-input-error :messages="$errors->get('password')" class="mt-2" />
+        <div class="animate-fade-in-up stagger-item" style="animation-delay: 0.2s; animation-fill-mode: forwards;">
+            <label for="password" class="auth-label">{{ __('Password') }}</label>
+            <div class="relative">
+                <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                    <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                    </svg>
+                </div>
+                <input id="password" type="password" name="password" 
+                    class="auth-input pl-12" 
+                    placeholder=""
+                    required autocomplete="new-password" />
+            </div>
+            <x-input-error :messages="$errors->get('password')" class="mt-2 text-red-400" />
 
             <!-- Password strength UI -->
-            <div class="mt-3">
-                <div class="h-2 w-full bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
-                    <div id="password-strength-bar" class="h-2 w-0 rounded-full transition-all duration-300 bg-gradient-to-r from-red-500 via-yellow-400 to-green-500"></div>
+            <div class="mt-4 p-4 rounded-xl bg-white/5 border border-white/10">
+                <div class="h-2 w-full bg-gray-700 rounded-full overflow-hidden">
+                    <div id="password-strength-bar" class="h-2 w-0 rounded-full transition-all duration-500 bg-gradient-to-r from-red-500 via-yellow-400 to-green-500"></div>
                 </div>
-                <div class="mt-2 flex items-center gap-3 text-xs text-gray-600 dark:text-gray-300">
-                    <div id="pw-strength-text" class="font-medium">Very weak</div>
-                    <div class="flex-1 h-px bg-transparent"></div>
+                <div class="mt-3 flex items-center gap-3 text-sm">
+                    <div id="pw-strength-text" class="font-semibold text-gray-400">Very weak</div>
                 </div>
 
-                <ul id="password-criteria" class="mt-3 grid grid-cols-2 gap-2 text-sm">
-                    <li class="flex items-center gap-2 text-gray-500" data-criterion="length">
-                        <svg class="w-4 h-4 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg>
-                        8–64 characters
+                <ul id="password-criteria" class="mt-4 grid grid-cols-2 gap-3 text-sm">
+                    <li class="flex items-center gap-2 text-gray-500 transition-all duration-300" data-criterion="length">
+                        <svg class="w-4 h-4 text-gray-600 transition-all duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg>
+                        <span>8–64 characters</span>
                     </li>
-                    <li class="flex items-center gap-2 text-gray-500" data-criterion="uppercase">
-                        <svg class="w-4 h-4 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg>
-                        1 uppercase letter
+                    <li class="flex items-center gap-2 text-gray-500 transition-all duration-300" data-criterion="uppercase">
+                        <svg class="w-4 h-4 text-gray-600 transition-all duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg>
+                        <span>1 uppercase letter</span>
                     </li>
-                    <li class="flex items-center gap-2 text-gray-500" data-criterion="number">
-                        <svg class="w-4 h-4 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg>
-                        1 number
+                    <li class="flex items-center gap-2 text-gray-500 transition-all duration-300" data-criterion="number">
+                        <svg class="w-4 h-4 text-gray-600 transition-all duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg>
+                        <span>1 number</span>
                     </li>
-                    <li class="flex items-center gap-2 text-gray-500" data-criterion="symbol">
-                        <svg class="w-4 h-4 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg>
-                        1 symbol (e.g. !@#$%)
+                    <li class="flex items-center gap-2 text-gray-500 transition-all duration-300" data-criterion="symbol">
+                        <svg class="w-4 h-4 text-gray-600 transition-all duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg>
+                        <span>1 symbol (!@#$%)</span>
                     </li>
                 </ul>
             </div>
         </div>
 
         <!-- Confirm Password -->
-        <div class="mt-4">
-            <x-input-label for="password_confirmation" :value="__('Confirm Password')" />
-
-            <x-text-input id="password_confirmation" class="block mt-1 w-full"
-                            type="password"
-                            name="password_confirmation" required autocomplete="new-password" />
-
-            <x-input-error :messages="$errors->get('password_confirmation')" class="mt-2" />
+        <div class="animate-fade-in-up stagger-item" style="animation-delay: 0.25s; animation-fill-mode: forwards;">
+            <label for="password_confirmation" class="auth-label">{{ __('Confirm Password') }}</label>
+            <div class="relative">
+                <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                    <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                    </svg>
+                </div>
+                <input id="password_confirmation" type="password" name="password_confirmation" 
+                    class="auth-input pl-12" 
+                    placeholder=""
+                    required autocomplete="new-password" />
+            </div>
+            <x-input-error :messages="$errors->get('password_confirmation')" class="mt-2 text-red-400" />
         </div>
 
-        <div class="flex items-center justify-end mt-4">
-            <a class="underline text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-offset-gray-800" href="{{ route('login') }}">
-                {{ __('Already registered?') }}
-            </a>
+        <!-- Submit Button -->
+        <div class="animate-fade-in-up stagger-item pt-2" style="animation-delay: 0.3s; animation-fill-mode: forwards;">
+            <button type="submit" class="auth-btn group">
+                <span class="flex items-center justify-center gap-2">
+                    {{ __('Create Account') }}
+                    <svg class="w-5 h-5 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
+                    </svg>
+                </span>
+            </button>
+        </div>
 
-            <x-primary-button class="ms-4">
-                {{ __('Register') }}
-            </x-primary-button>
+        <!-- Divider -->
+        <div class="relative my-4 animate-fade-in stagger-item" style="animation-delay: 0.35s; animation-fill-mode: forwards;">
+            <div class="absolute inset-0 flex items-center">
+                <div class="w-full border-t border-gray-600"></div>
+            </div>
+            <div class="relative flex justify-center text-sm">
+                <span class="px-4 text-gray-400 bg-transparent">Already have an account?</span>
+            </div>
+        </div>
+
+        <!-- Login Link -->
+        <div class="text-center animate-fade-in-up stagger-item" style="animation-delay: 0.4s; animation-fill-mode: forwards;">
+            <a href="{{ route('login') }}" class="inline-flex items-center gap-2 text-gray-300 hover:text-white transition-all duration-300 group">
+                <svg class="w-4 h-4 transform group-hover:-translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 17l-5-5m0 0l5-5m-5 5h12" />
+                </svg>
+                <span>Sign in instead</span>
+            </a>
         </div>
     </form>
 
@@ -90,13 +148,12 @@
             if (!pwd) return;
 
             function testPassword(value) {
-                const results = {
+                return {
                     length: value.length >= 8 && value.length <= 64,
                     uppercase: /[A-Z]/.test(value),
                     number: /[0-9]/.test(value),
                     symbol: /[^A-Za-z0-9]/.test(value),
                 };
-                return results;
             }
 
             function updateUI(value){
@@ -106,48 +163,48 @@
 
                 if (bar) bar.style.width = pct + '%';
 
-                // color mapping
+                // Update strength text and colors
                 if (pct <= 25) {
-                    bar.classList.remove('from-yellow-400','to-green-500');
-                    bar.classList.add('from-red-500');
                     text.textContent = 'Very weak';
+                    text.className = 'font-semibold text-red-400';
                 } else if (pct <= 50) {
-                    bar.classList.remove('from-red-500','to-green-500');
-                    bar.classList.add('from-yellow-400');
                     text.textContent = 'Weak';
+                    text.className = 'font-semibold text-orange-400';
                 } else if (pct <= 75) {
-                    bar.classList.remove('from-red-500','from-yellow-400');
-                    bar.classList.add('from-yellow-400','to-green-500');
                     text.textContent = 'Good';
+                    text.className = 'font-semibold text-yellow-400';
                 } else {
-                    bar.classList.remove('from-red-500','from-yellow-400');
-                    bar.classList.add('from-green-500');
                     text.textContent = 'Strong';
+                    text.className = 'font-semibold text-green-400';
                 }
 
-                // update checklist icons and color
+                // Update checklist with animations
                 criteria.forEach(li => {
                     const key = li.getAttribute('data-criterion');
                     const ok = !!res[key];
                     const svg = li.querySelector('svg');
                     if (ok) {
                         li.classList.remove('text-gray-500');
-                        li.classList.add('text-green-600');
-                        if (svg) svg.classList.remove('text-gray-300');
-                        if (svg) svg.classList.add('text-green-600');
+                        li.classList.add('text-green-400');
+                        if (svg) {
+                            svg.classList.remove('text-gray-600');
+                            svg.classList.add('text-green-400');
+                            svg.style.transform = 'scale(1.2)';
+                            setTimeout(() => svg.style.transform = 'scale(1)', 200);
+                        }
                     } else {
-                        li.classList.remove('text-green-600');
+                        li.classList.remove('text-green-400');
                         li.classList.add('text-gray-500');
-                        if (svg) svg.classList.remove('text-green-600');
-                        if (svg) svg.classList.add('text-gray-300');
+                        if (svg) {
+                            svg.classList.remove('text-green-400');
+                            svg.classList.add('text-gray-600');
+                        }
                     }
                 });
             }
 
             pwd.addEventListener('input', e => updateUI(e.target.value));
-            // initialize if value present
             updateUI(pwd.value || '');
         })();
     </script>
-
 </x-guest-layout>
