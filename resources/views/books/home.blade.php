@@ -227,7 +227,11 @@
                                         <input type="hidden" name="tags[]" value="{{ $t }}">
                                     @endforeach
                                     <label class="text-sm font-medium text-gray-600 dark:text-gray-300">Sort:</label>
-                                    <div class="flex items-center gap-2">
+                                    <div class="flex items-center gap-3">
+                                        <div class="relative group">
+                                            <svg id="sort-help-icon" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400 cursor-help transition-colors duration-200" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a.75.75 0 000 1.5h.253a.25.25 0 01.244.304l-.459 2.066A1.75 1.75 0 0010.747 15H11a.75.75 0 000-1.5h-.253a.25.25 0 01-.244-.304l.459-2.066A1.75 1.75 0 009.253 9H9z" clip-rule="evenodd"/></svg>
+                                            <div id="sort-help" class="absolute hidden group-hover:block bg-gray-900 dark:bg-gray-950 text-white text-xs p-3 rounded-xl shadow-2xl whitespace-nowrap z-50 right-full mr-2 top-1/2 -translate-y-1/2 w-max border border-gray-700">Sort by most recent by default.</div>
+                                        </div>
                                         <select id="sort-select" name="sort" onchange="this.form.submit()" class="px-4 py-2.5 rounded-xl bg-white dark:bg-gray-700 border-2 border-gray-200 dark:border-gray-600 text-sm font-medium hover:border-indigo-400 dark:hover:border-indigo-500 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition-all duration-300 cursor-pointer">
                                             <option value="latest" {{ !request('sort') || request('sort') === 'latest' ? 'selected' : '' }}>🕐 Latest</option>
                                             <option value="alpha" {{ request('sort') === 'alpha' ? 'selected' : '' }}>🔤 Alphabetical</option>
@@ -236,10 +240,6 @@
                                             <option value="top_rated" {{ request('sort') === 'top_rated' ? 'selected' : '' }}>🏆 Top Rated</option>
                                             <option value="most_popular" {{ request('sort') === 'most_popular' ? 'selected' : '' }}>🔥 Most Popular</option>
                                         </select>
-                                        <div class="relative group">
-                                            <svg id="sort-help-icon" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400 cursor-help transition-colors duration-200" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M18 10A8 8 0 11-2 10a8 8 0 0120 0zM9 7a1 1 0 112 0 1 1 0 01-2 0zm.25 2.5a.75.75 0 00-.75.75v3.5a.75.75 0 001.5 0V10.25a.75.75 0 00-.75-.75z" clip-rule="evenodd"/></svg>
-                                            <div id="sort-help" class="absolute hidden group-hover:block bg-gray-900 dark:bg-gray-950 text-white text-xs p-3 rounded-xl shadow-2xl whitespace-nowrap z-10 -right-2 top-8 w-max border border-gray-700">Sort by most recent by default.</div>
-                                        </div>
                                     </div>
                                     <script>
                                         (function(){

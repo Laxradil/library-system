@@ -36,24 +36,42 @@
                         <div class="flex items-start justify-between">
                             <div>
                                 <h2 class="text-2xl font-bold text-gray-900 dark:text-gray-100" x-text="book?.title"></h2>
-                                <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">@ <span x-text="book?.user?.name"></span></p>
-                            </div>
-                            <div class="text-sm text-gray-500 dark:text-gray-400 flex items-center gap-3">
-                                <div class="flex items-center gap-2">
-                                    <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3"/></svg>
-                                    <span class="font-medium" x-text="book?.rating ?? 0"></span>
-                                </div>
-                                <!-- viewer count intentionally removed in enlarged modal -->
+                                <p class="text-sm text-gray-500 dark:text-gray-400 mt-1 flex items-center gap-2">
+                                    <svg class="w-4 h-4 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                                    </svg>
+                                    <span class="font-medium text-gray-700 dark:text-gray-300" x-text="book?.author || 'Unknown Author'"></span>
+                                </p>
                             </div>
                         </div>
 
-                        <div class="flex items-center gap-4 text-sm text-gray-600 dark:text-gray-300">
-                            <div class="flex items-center gap-2" x-show="book?.published_at">
-                                <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
-                                <span>Published: <strong class="font-medium text-gray-300 dark:text-gray-200" x-text="book?.published_at_formatted"></strong></span>
+                        <!-- Rating Stars -->
+                        <div class="flex items-center gap-3 py-2">
+                            <div class="flex items-center gap-1">
+                                <template x-for="i in 5" :key="i">
+                                    <svg class="w-5 h-5" :class="i <= (book?.rating || 0) ? 'text-yellow-400' : 'text-gray-300 dark:text-gray-600'" fill="currentColor" viewBox="0 0 20 20">
+                                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                                    </svg>
+                                </template>
                             </div>
-                            <div class="flex items-center gap-2"><svg class="w-4 h-4 text-gray-400" fill="currentColor" viewBox="0 0 20 20"><path d="M10.5 1.5H3.75A2.25 2.25 0 001.5 3.75v12.5A2.25 2.25 0 003.75 18.5h12.5a2.25 2.25 0 002.25-2.25V9.5m-15-4h14m-14 4v8.5m0-8.5h14"></path></svg> <span>Added: <strong class="font-medium text-gray-300 dark:text-gray-200" x-text="book?.created_at_formatted"></strong></span></div>
-                            <div class="flex items-center gap-2"><svg class="w-4 h-4 text-gray-400" fill="currentColor" viewBox="0 0 20 20"><path d="M10 20l-6-6 1.414-1.414L10 17.172l4.586-4.586L16 14l-6 6z"></path></svg> <span>By: <strong class="font-medium text-gray-300 dark:text-gray-200" x-text="book?.user?.name"></strong></span></div>
+                            <span class="text-sm font-semibold text-gray-700 dark:text-gray-300">
+                                <span x-text="book?.rating || 0"></span>/5
+                            </span>
+                        </div>
+
+                        <div class="flex flex-wrap items-center gap-4 text-sm text-gray-600 dark:text-gray-300 py-2 border-t border-b border-gray-200 dark:border-gray-700">
+                            <div class="flex items-center gap-2" x-show="book?.published_at">
+                                <svg class="w-4 h-4 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                                <span>Published: <strong class="font-medium text-gray-800 dark:text-gray-200" x-text="book?.published_at_formatted"></strong></span>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <svg class="w-4 h-4 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                                <span>Added: <strong class="font-medium text-gray-800 dark:text-gray-200" x-text="book?.created_at_formatted"></strong></span>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <svg class="w-4 h-4 text-pink-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+                                <span>By: <strong class="font-medium text-gray-800 dark:text-gray-200" x-text="book?.user?.name"></strong></span>
+                            </div>
                         </div>
 
                         <div class="pt-3">
