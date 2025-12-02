@@ -1,4 +1,4 @@
-<x-guest-layout>
+﻿<x-guest-layout>
     <!-- Header -->
     <div class="text-center mb-8 animate-fade-in-up">
         <h2 class="text-3xl font-bold text-white mb-2">Create Account</h2>
@@ -19,7 +19,7 @@
                 </div>
                 <input id="name" type="text" name="name" value="{{ old('name') }}" 
                     class="auth-input pl-12" 
-                    placeholder="John Doe"
+                    placeholder=""
                     required autofocus autocomplete="name" />
             </div>
             <x-input-error :messages="$errors->get('name')" class="mt-2 text-red-400" />
@@ -70,7 +70,7 @@
                 <ul id="password-criteria" class="mt-4 grid grid-cols-2 gap-3 text-sm">
                     <li class="flex items-center gap-2 text-gray-500 transition-all duration-300" data-criterion="length">
                         <svg class="w-4 h-4 text-gray-600 transition-all duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg>
-                        <span>8–64 characters</span>
+                        <span>8â€“64 characters</span>
                     </li>
                     <li class="flex items-center gap-2 text-gray-500 transition-all duration-300" data-criterion="uppercase">
                         <svg class="w-4 h-4 text-gray-600 transition-all duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg>
