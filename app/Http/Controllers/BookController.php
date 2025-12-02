@@ -131,9 +131,23 @@ class BookController extends Controller
 
         $booksQuery = Book::with('user');
 
-        // For Manage Books: hide unapproved only from unauthenticated users and viewers
-        // Contributors and Admins should see pending books in Manage view
-        if (!auth()->check() || (auth()->user() && auth()->user()->role === 'viewer')) {
+        // For Manage Books:
+        // - Admins see all books (approved and pending)
+        // - Contributors only see their own books
+        // - Viewers/unauthenticated only see approved books
+        if (auth()->check()) {
+            $user = auth()->user();
+            if ($user->role === 'admin') {
+                // Admin sees all books
+            } elseif ($user->role === 'contributor') {
+                // Contributors only see their own books
+                $booksQuery->where('user_id', $user->id);
+            } else {
+                // Viewers only see approved books
+                $booksQuery->where('approved', true);
+            }
+        } else {
+            // Unauthenticated users only see approved books
             $booksQuery->where('approved', true);
         }
 
