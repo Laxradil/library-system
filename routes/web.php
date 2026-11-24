@@ -60,6 +60,6 @@ Route::middleware(['auth', 'can:is-admin'])->prefix('admin')->name('admin.')->gr
     
     // Admin book approval toggle
     Route::post('/books/{book}/approve', [\App\Http\Controllers\Admin\BookController::class, 'approve'])->name('books.approve');
-});;
+});
 
 require __DIR__.'/auth.php';
