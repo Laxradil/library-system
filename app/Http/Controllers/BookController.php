@@ -63,12 +63,15 @@ class BookController extends Controller
         }
 
         if (!empty($selectedTags)) {
-            // Match genres as whole words (comma-separated list) to avoid partial matches
-            // e.g., "Fiction" should match "Fiction,Fantasy" but NOT "Non-Fiction"
             $booksQuery->where(function ($q) use ($selectedTags) {
                 foreach ($selectedTags as $tag) {
-                    // Match: exact word, OR preceded by comma, OR followed by comma, OR both
-                    $q->orWhere('genre', 'regexp', "(^|,)\\s*" . preg_quote($tag, '/') . "\\s*(,|$)");
+                    $q->orWhere(function ($genreQuery) use ($tag) {
+                        $genreQuery
+                            ->where('genre', $tag)
+                            ->orWhere('genre', 'like', $tag . ',%')
+                            ->orWhere('genre', 'like', '%,' . $tag)
+                            ->orWhere('genre', 'like', '%,' . $tag . ',%');
+                    });
                 }
             });
         }
@@ -100,11 +103,15 @@ class BookController extends Controller
         // Prepare 1-3 featured approved books for each main genre for the Browse-by-Genre panels
         $genrePanels = [];
         foreach ($mainGenres as $g) {
-            // Use word-boundary matching so "Fiction" panel shows only Fiction books,
-            // not "Non-Fiction" books. Match as whole words in a comma-separated list.
             $genrePanels[$g] = Book::with('user')
                 ->where('approved', true)
-                ->where('genre', 'regexp', "(^|,)\\s*" . preg_quote($g, '/') . "\\s*(,|$)")
+                ->where(function ($query) use ($g) {
+                    $query
+                        ->where('genre', $g)
+                        ->orWhere('genre', 'like', $g . ',%')
+                        ->orWhere('genre', 'like', '%,' . $g)
+                        ->orWhere('genre', 'like', '%,' . $g . ',%');
+                })
                 ->orderByRaw("COALESCE(published_at, created_at) DESC")
                 ->limit(3)
                 ->get();
@@ -225,14 +232,14 @@ class BookController extends Controller
     // Show edit form
     public function edit(Book $book)
     {
-        $this->authorize('is-contributor');
+        $this->authorize('update-book', $book);
         return view('books.edit', compact('book'));
     }
 
     // Update book
     public function update(Request $request, Book $book)
     {
-        $this->authorize('is-contributor');
+        $this->authorize('update-book', $book);
         $validated = $request->validate([
             'title' => 'required|string|max:255',
             'author' => 'required|string|max:255',
@@ -258,7 +265,7 @@ class BookController extends Controller
     // Delete book
     public function destroy(Book $book)
     {
-        $this->authorize('is-contributor');
+        $this->authorize('delete-book', $book);
         $book->delete();
         return redirect()->route('books.index')->with('success', 'Book deleted successfully.');
     }

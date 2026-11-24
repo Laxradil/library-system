@@ -1,59 +1,130 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# LibraryHub
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+LibraryHub is a Laravel-based digital library catalog for browsing books, managing a personal wishlist, and publishing books through role-based contributor and administrator workflows.
 
-## About Laravel
+## Features
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+- Public catalog with search, sorting, genre filters, and recently released books
+- Contributor book submission and editing
+- Administrator approval and user-role management
+- Personal wishlists for signed-in users
+- Cover image uploads
+- Reader view tracking and popularity ranking
+- Responsive Breeze authentication and Tailwind interface
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## Tech stack
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+- PHP 8.2+
+- Laravel 12
+- Laravel Breeze
+- Tailwind CSS
+- Alpine.js
+- Vite
+- SQLite by default
 
-## Learning Laravel
+## Getting started
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+### Prerequisites
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+- PHP 8.2 or newer
+- Composer
+- Node.js 20+
+- npm
 
-## Laravel Sponsors
+### Local setup
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+```bash
+composer install
+npm install
 
-### Premium Partners
+cp .env.example .env
+php artisan key:generate
+touch database/database.sqlite
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+php artisan migrate --seed
+npm run build
+
+php artisan serve
+```
+
+For Windows PowerShell, create the SQLite database with:
+
+```powershell
+New-Item database/database.sqlite -ItemType File
+```
+
+Visit `http://127.0.0.1:8000`.
+
+### Development server
+
+```bash
+composer run dev
+```
+
+This starts Laravel, the queue listener, Pail, and the Vite development server.
+
+## Demo accounts
+
+The database seeder creates sample users for each role:
+
+| Role | Email | Password |
+| --- | --- | --- |
+| Administrator | admin@libraryhub.test | password |
+| Contributor | contributor@libraryhub.test | password |
+| Viewer | viewer@libraryhub.test | password |
+
+These credentials are intended for local development only. Change or remove them before deploying the application.
+
+## Available roles
+
+- **Viewer:** Browse approved books and maintain a wishlist
+- **Contributor:** Submit and manage their own books
+- **Administrator:** Approve books and manage users and roles
+
+## Testing
+
+```bash
+php artisan test
+```
+
+Run frontend production compilation with:
+
+```bash
+npm run build
+```
+
+## Project structure
+
+```text
+app/
+  Http/Controllers/  Application request handlers
+  Models/            Eloquent models
+  Policies/          Authorization policies
+database/
+  migrations/        Database schema
+  seeders/           Demo data
+resources/
+  views/             Blade templates
+  css/               Tailwind styles
+  js/                Alpine/Vite entrypoints
+routes/web.php       Application routes
+tests/               Pest tests
+```
+
+## Environment
+
+The default `.env.example` uses SQLite. For other databases, update `DB_CONNECTION`, `DB_HOST`, `DB_PORT`, `DB_DATABASE`, `DB_USERNAME`, and `DB_PASSWORD`.
+
+Uploaded covers are stored under `storage/app/public/covers`. Make them available with:
+
+```bash
+php artisan storage:link
+```
 
 ## Contributing
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
-
-## Code of Conduct
-
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
-
-## Security Vulnerabilities
-
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+Create a focused feature branch, keep changes small, add or update tests, and run `php artisan test` and `npm run build` before submitting a pull request.
 
 ## License
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+This project is open-sourced under the [MIT license](https://opensource.org/licenses/MIT).
